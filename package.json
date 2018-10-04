@@ -2,12 +2,16 @@
   "name": "smm_service_frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://dimadk24.github.io/smm_service_frontend",
   "dependencies": {
+    "gh-pages": "^2.0.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.4"
   },
   "scripts": {
+    "deploy": "gh-pages -d build",
+    "predeploy": "npm run build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
