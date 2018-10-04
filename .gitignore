@@ -19,3 +19,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# For simplier working exclude Jetbrains stuff
+.idea/
