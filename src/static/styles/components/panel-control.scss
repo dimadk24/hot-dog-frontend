@@ -1,0 +1,24 @@
+.panel-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    width: 100%;
+
+    .header-control {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        height: 7rem;
+
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+
+        font-size: 1.6rem;
+        text-transform: capitalize;
+
+        padding: 0 1rem;
+    }
+}
