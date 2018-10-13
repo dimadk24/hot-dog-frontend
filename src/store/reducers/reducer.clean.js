@@ -1,0 +1,5 @@
+export const REFRESH_GROUPS = 'groups/REFRESH_GROUPS'
+export const CLEAN_GROUPS = 'groups/CLEAN_GROUPS'
+export const DELETE_GROUPS = 'groups/DELETE_GROUPS'
+export const SELECT_GROUP = 'groups/SELECT_GROUP'
+export const ADD_GROUP = 'groups/ADD_GROUP'
