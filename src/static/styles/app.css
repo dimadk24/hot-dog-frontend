@@ -76,11 +76,15 @@ body {
   margin-top: 3rem; }
   .public-wrapper .public {
     width: 100%;
+    cursor: pointer;
     background: white;
     padding: 1rem 3rem;
     color: #495057;
     border-radius: 2px;
-    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1); }
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.25s; }
+    .public-wrapper .public:hover {
+      background: rgba(0, 0, 0, 0.001); }
     .public-wrapper .public__heading {
       display: flex;
       justify-content: space-between;
