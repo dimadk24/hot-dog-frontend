@@ -108,7 +108,7 @@ body {
         align-items: center; }
       .public-wrapper .public__info--all {
         font-size: 2rem; }
-      .public-wrapper .public__info--unactive {
+      .public-wrapper .public__info--deleted {
         font-size: 2rem; }
 
 .btn {
