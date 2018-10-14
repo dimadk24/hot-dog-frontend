@@ -3,6 +3,7 @@ import {FaUsers} from 'react-icons/fa/index'
 import logo from '../../../../static/images/logo.jpg'
 class PublicGroup extends Component {
     render() {
+        const {groupName, peopleCount, deletedPeople, isLoading} = this.props
         return (
             <div className="public-wrapper">
                 <div className="public">
@@ -12,18 +13,16 @@ class PublicGroup extends Component {
                             src={logo}
                             alt="pub img"
                         />
-                        <div className="public__heading__name">
-                            Мой Компьютер
-                        </div>
+                        <div className="public__heading__name">{groupName}</div>
                     </div>
                     <div className="public__info">
                         <div className="public__info__container public__info--all">
                             <FaUsers />
-                            500000
+                            {peopleCount}
                         </div>
                         <div className="public__info__container public__info--deleted">
                             <FaUsers />
-                            10
+                            {deletedPeople}
                         </div>
                     </div>
                 </div>
