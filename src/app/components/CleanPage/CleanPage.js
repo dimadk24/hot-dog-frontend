@@ -67,7 +67,7 @@ function convertPublicsFromVkFormat(array) {
     function converter(item) {
         // noinspection JSUnresolvedVariable
         return {
-            ava: item.photo_100,
+            avatar_url: item.photo_100,
             id: item.id,
             name: item.name
         }
