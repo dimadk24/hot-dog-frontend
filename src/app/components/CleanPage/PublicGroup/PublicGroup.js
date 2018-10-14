@@ -21,7 +21,7 @@ class PublicGroup extends Component {
                             <FaUsers />
                             500000
                         </div>
-                        <div className="public__info__container public__info--unactive">
+                        <div className="public__info__container public__info--deleted">
                             <FaUsers />
                             10
                         </div>

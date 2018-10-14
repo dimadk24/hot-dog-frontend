@@ -5,6 +5,8 @@
 
     width: 100%;
 
+    max-width: 35rem;
+
     .header-control {
         display: flex;
         flex-direction: column;
@@ -20,5 +22,12 @@
         text-transform: capitalize;
 
         padding: 0 1rem;
+
+        cursor: pointer;
+
+        transition: background 0.25s;
+        &:hover {
+            background: rgba(#000, 0.05);
+        }
     }
 }
