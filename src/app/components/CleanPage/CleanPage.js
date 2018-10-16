@@ -27,6 +27,25 @@ class CleanPage extends Component {
                     '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
             }
         })).data
+        const cleanTasks = (await axios.get(
+            'http://hot-dog.site/api/getCleanTasks',
+            {
+                params: {
+                    auth_access_token:
+                        '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+                }
+            }
+        )).data
+        if (cleanTasks && cleanTasks.length) {
+            for (const cleanTask of cleanTasks) {
+                for (const publik of publics) {
+                    if (publik.id === cleanTask.public_id) {
+                        publik.isCleaning = true
+                        publik.cleanTask = cleanTask
+                    }
+                }
+            }
+        }
         this.setState({publics: publics})
     }
 

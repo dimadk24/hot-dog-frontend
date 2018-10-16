@@ -8,9 +8,9 @@ class Public extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isCleaning: false,
-            cleanProgress: 0,
-            progressStatus: 'Запускаем'
+            isCleaning: props.isCleaning,
+            cleanProgress: props.cleanTask.progress,
+            progressStatus: props.cleanTask.status
         }
     }
 
