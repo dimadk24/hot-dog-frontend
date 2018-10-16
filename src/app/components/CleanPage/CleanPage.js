@@ -21,7 +21,6 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
-        console.log('willmount')
         const publics = (await axios.get('http://hot-dog.site/api/getPublics', {
             params: {
                 auth_access_token:
@@ -75,9 +74,11 @@ class CleanPage extends Component {
         }
         const newPublic = await this.addPublicAndGetItsData(publicId)
         this.setState({publics: [newPublic]})
+        newPublic.dogs = await this.getDogsCount(newPublic.id)
+        this.setState({publics: [newPublic]})
     }
 
-   async convertPublicLinkToId(link) {
+    async convertPublicLinkToId(link) {
         const searchElement = 'vk.com/'
         if (!link.includes(searchElement)) {
             throw new Error('no vk.com in link')
@@ -123,7 +124,7 @@ class CleanPage extends Component {
         })
     }
 
-   isId(name) {
+    isId(name) {
         return Boolean(name.match(/^((club)|(public))\d+$/))
     }
 
@@ -132,14 +133,21 @@ class CleanPage extends Component {
     }
 
     async addPublicAndGetItsData(publicId) {
-        return (await axios.post(
-            'http://hot-dog.site/api/addPublic',
-            {
+        return (await axios.post('http://hot-dog.site/api/addPublic', {
+            auth_access_token:
+                '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844',
+            vk_id: publicId
+        })).data
+    }
+
+    async getDogsCount(publicId) {
+        return (await axios.get('http://hot-dog.site/api/getDogsCount', {
+            params: {
+                id: publicId,
                 auth_access_token:
-                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844',
-                vk_id: publicId
+                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
             }
-        )).data
+        })).data.dogs_count
     }
 }
 
