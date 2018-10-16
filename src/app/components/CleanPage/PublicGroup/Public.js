@@ -14,7 +14,6 @@ class Public extends Component {
     }
 
     render() {
-        const {groupName, peopleCount, deletedPeople, isLoading} = this.props
         return (
             <div className="public-wrapper">
                 <div className="public">
