@@ -53,6 +53,7 @@
 .percent {
     position: absolute;
     left: 50%;
+    color: brown;
 }
 
 .progress-status {
