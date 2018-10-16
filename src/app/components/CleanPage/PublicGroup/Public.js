@@ -1,7 +1,13 @@
 import React, {Component} from 'react'
-import {FaUsers} from 'react-icons/fa/index'
 import logo from '../../../../static/images/logo.jpg'
-class PublicGroup extends Component {
+import {PublicInfo} from './PublicInfo'
+
+class Public extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {isCleaning: false, cleanProgress: 0}
+    }
+
     render() {
         const {groupName, peopleCount, deletedPeople, isLoading} = this.props
         return (
@@ -16,14 +22,14 @@ class PublicGroup extends Component {
                         <div className="public__heading__name">{groupName}</div>
                     </div>
                     <div className="public__info">
-                        <div className="public__info__container public__info--all">
-                            <FaUsers />
-                            {peopleCount}
-                        </div>
-                        <div className="public__info__container public__info--deleted">
-                            <FaUsers />
-                            {deletedPeople}
-                        </div>
+                        {this.state.isCleaning ? (
+                            <ProgressBar progress={this.state.cleanProgress} />
+                        ) : (
+                            <PublicInfo
+                                peopleCount={peopleCount}
+                                deletedPeople={deletedPeople}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
@@ -31,4 +37,4 @@ class PublicGroup extends Component {
     }
 }
 
-export default PublicGroup
+export default Public

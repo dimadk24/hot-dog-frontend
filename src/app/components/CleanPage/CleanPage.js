@@ -1,15 +1,22 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PanelControl from './PanelControl/PanelControl'
-import PublicGroup from './PublicGroup/PublicGroup'
+import Public from './PublicGroup/Public'
 import {bindActionCreators} from 'redux'
+import {AddPublicButton} from './PublicGroup/AddPublicButton'
+import swal from 'sweetalert'
 
 class CleanPage extends Component {
+    state = {
+        showGroupsModal: false
+    }
+
     renderGroups = (groups) => {
         return Object.keys(groups).map((key, i) => (
-            <PublicGroup {...groups[key]} key={i} />
+            <Public {...groups[key]} key={i} />
         ))
     }
+
     constructor(props) {
         super(props)
         /*global VK*/
@@ -40,15 +47,73 @@ class CleanPage extends Component {
         )
     }
 
+    static async showModal() {
+        const addingPublicLink = await swal({
+            text: 'Введите ссылку на сообщество:',
+            content: 'input',
+            button: 'Добавить!'
+        })
+        let publicId
+        try {
+            publicId = await this.convertPublicLinkToId(addingPublicLink)
+        } catch (e) {
+            console.log(e)
+        }
+        console.log(publicId)
+    }
+
+    static async convertPublicLinkToId(link) {
+        const searchElement = 'vk.com/'
+        if (!link.includes(searchElement)) {
+            throw new Error('no vk.com in link')
+        }
+        const name = link.slice(
+            link.indexOf(searchElement) + searchElement.length
+        )
+        if (this.isId(name)) {
+            return this.getPublicId(name)
+        }
+        return await this.resolvePublicName(name)
+    }
+
     render() {
         const {groups} = this.props
         return (
             <div className="clean">
                 <PanelControl />
                 {groups && this.renderGroups(groups)}
-                <div className="btn btn__add">Добавить Сообщество</div>
+                <AddPublicButton onClick={() => CleanPage.showModal()} />
+                {/*{showGroupsModal && <Modal/>}*/}
             </div>
         )
+    }
+
+    static resolvePublicName(name) {
+        return new Promise((resolve, reject) => {
+            /*global VK*/
+            VK.api(
+                'utils.resolveScreenName',
+                {
+                    screen_name: name,
+                    v: '5.85'
+                },
+                ({response}) => {
+                    if (response.type === 'group') {
+                        // noinspection JSUnresolvedVariable
+                        resolve(response.object_id)
+                    }
+                    reject('not group')
+                }
+            )
+        })
+    }
+
+    static isId(name) {
+        return Boolean(name.match(/^((club)|(public))\d+$/))
+    }
+
+    static getPublicId(id) {
+        return +id.match(/\d+$/)[0]
     }
 }
 
@@ -72,5 +137,6 @@ function convertPublicsFromVkFormat(array) {
             name: item.name
         }
     }
+
     return array.map(converter)
 }

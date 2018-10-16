@@ -17,6 +17,7 @@
         "react-scripts": "2.0.4",
         "redux": "^4.0.1",
         "redux-thunk": "^2.3.0",
+        "sweetalert": "^2.1.0",
         "tabler-ui": "^0.0.32"
     },
     "scripts": {
