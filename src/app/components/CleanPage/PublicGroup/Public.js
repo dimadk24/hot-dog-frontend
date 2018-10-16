@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
-import logo from '../../../../static/images/logo.jpg'
 import {PublicInfo} from './PublicInfo'
 import {ProgressBar} from './ProgressBar'
+import {PublicAvatar} from './PublicAvatar'
 
 class Public extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isCleaning: true,
+            isCleaning: false,
             cleanProgress: 0,
             progressStatus: 'Запускаем'
         }
@@ -19,12 +19,8 @@ class Public extends Component {
             <div className="public-wrapper">
                 <div className="public">
                     <div className="public__heading">
-                        <img
-                            className="public__heading__img"
-                            src={logo}
-                            alt="pub img"
-                        />
-                        <div className="public__heading__name">{groupName}</div>
+                        <PublicAvatar url={this.props.avatar_url}/>
+                        <div className="public__heading__name">{this.props.name}</div>
                     </div>
                     <div className="public__info">
                         {this.state.isCleaning ? (
@@ -34,8 +30,8 @@ class Public extends Component {
                             />
                         ) : (
                             <PublicInfo
-                                peopleCount={peopleCount}
-                                deletedPeople={deletedPeople}
+                                peopleCount={this.props.followers}
+                                deletedPeople={this.props.dogs}
                             />
                         )}
                     </div>

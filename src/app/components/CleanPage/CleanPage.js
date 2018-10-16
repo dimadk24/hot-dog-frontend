@@ -5,49 +5,63 @@ import Public from './PublicGroup/Public'
 import {bindActionCreators} from 'redux'
 import {AddPublicButton} from './PublicGroup/AddPublicButton'
 import swal from 'sweetalert'
+import axios from 'axios'
 
 class CleanPage extends Component {
     state = {
-        showGroupsModal: false
+        showGroupsModal: false,
+        publics: []
     }
 
     renderGroups = (groups) => {
+        if (!groups.length) return null
         return Object.keys(groups).map((key, i) => (
             <Public {...groups[key]} key={i} />
         ))
     }
 
+    async componentWillMount() {
+        console.log('willmount')
+        const publics = (await axios.get('http://hot-dog.site/api/getPublics', {
+            params: {
+                auth_access_token:
+                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+            }
+        })).data
+        this.setState({publics: publics})
+    }
+
     constructor(props) {
         super(props)
         /*global VK*/
-        VK.init(
-            () => {
-                VK.api(
-                    'groups.get',
-                    {
-                        filter: 'moder',
-                        extended: '1',
-                        fields: 'photo_100',
-                        v: '5.85'
-                    },
-                    (data) => {
-                        const publics = convertPublicsFromVkFormat(
-                            data.response.items
-                        )
-                        const publics_count = data.response.count
-                        console.log(`Got ${publics_count} publics from VK:`)
-                        console.log(publics)
-                    }
-                )
-            },
-            () => {
-                console.log('VK API initialization failed')
-            },
-            '5.85'
-        )
+        // VK.init(
+        //     () => {
+        //         VK.api(
+        //             'groups.get',
+        //             {
+        //                 filter: 'moder',
+        //                 extended: '1',
+        //                 fields: 'photo_100',
+        //                 v: '5.85'
+        //             },
+        //             (data) => {
+        //                 const publics = convertPublicsFromVkFormat(
+        //                     data.response.items
+        //                 )
+        //                 const publics_count = data.response.count
+        //                 console.log(`Got ${publics_count} publics from VK:`)
+        //                 console.log(publics)
+        //             }
+        //         )
+        //     },
+        //     () => {
+        //         console.log('VK API initialization failed')
+        //     },
+        //     '5.85'
+        // )
     }
 
-    static async showModal() {
+    async showModal() {
         const addingPublicLink = await swal({
             text: 'Введите ссылку на сообщество:',
             content: 'input',
@@ -59,10 +73,11 @@ class CleanPage extends Component {
         } catch (e) {
             console.log(e)
         }
-        console.log(publicId)
+        const newPublic = await this.addPublicAndGetItsData(publicId)
+        this.setState({publics: [newPublic]})
     }
 
-    static async convertPublicLinkToId(link) {
+   async convertPublicLinkToId(link) {
         const searchElement = 'vk.com/'
         if (!link.includes(searchElement)) {
             throw new Error('no vk.com in link')
@@ -77,12 +92,12 @@ class CleanPage extends Component {
     }
 
     render() {
-        const {groups} = this.props
+        const {publics} = this.state
         return (
             <div className="clean">
                 <PanelControl />
-                {groups && this.renderGroups(groups)}
-                <AddPublicButton onClick={() => CleanPage.showModal()} />
+                {publics && this.renderGroups(publics)}
+                <AddPublicButton onClick={() => this.showModal()} />
                 {/*{showGroupsModal && <Modal/>}*/}
             </div>
         )
@@ -91,29 +106,40 @@ class CleanPage extends Component {
     static resolvePublicName(name) {
         return new Promise((resolve, reject) => {
             /*global VK*/
-            VK.api(
-                'utils.resolveScreenName',
-                {
-                    screen_name: name,
-                    v: '5.85'
-                },
-                ({response}) => {
-                    if (response.type === 'group') {
-                        // noinspection JSUnresolvedVariable
-                        resolve(response.object_id)
-                    }
-                    reject('not group')
-                }
-            )
+            // VK.api(
+            //     'utils.resolveScreenName',
+            //     {
+            //         screen_name: name,
+            //         v: '5.85'
+            //     },
+            //     ({response}) => {
+            //         if (response.type === 'group') {
+            //             // noinspection JSUnresolvedVariable
+            //             resolve(response.object_id)
+            //         }
+            //         reject('not group')
+            //     }
+            // )
         })
     }
 
-    static isId(name) {
+   isId(name) {
         return Boolean(name.match(/^((club)|(public))\d+$/))
     }
 
-    static getPublicId(id) {
+    getPublicId(id) {
         return +id.match(/\d+$/)[0]
+    }
+
+    async addPublicAndGetItsData(publicId) {
+        return (await axios.post(
+            'http://hot-dog.site/api/addPublic',
+            {
+                auth_access_token:
+                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844',
+                vk_id: publicId
+            }
+        )).data
     }
 }
 
