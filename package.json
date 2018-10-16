@@ -21,6 +21,7 @@
         "tabler-ui": "^0.0.32"
     },
     "scripts": {
+        "easy-start":"react-scripts start",
         "deploy": "gh-pages -d build",
         "predeploy": "npm run build",
         "start": "concurrently \"react-scripts start\" \"sass --watch ./src/static/styles/index.scss:./src/static/styles/app.css\"  ",
