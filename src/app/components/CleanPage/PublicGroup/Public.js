@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {PublicInfo} from './PublicInfo'
 import {ProgressBar} from './ProgressBar'
 import {PublicAvatar} from './PublicAvatar'
+import './Public.css'
 
 class Public extends Component {
     constructor(props) {
