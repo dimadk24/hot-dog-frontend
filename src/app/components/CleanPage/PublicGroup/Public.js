@@ -1,11 +1,16 @@
 import React, {Component} from 'react'
 import logo from '../../../../static/images/logo.jpg'
 import {PublicInfo} from './PublicInfo'
+import {ProgressBar} from './ProgressBar'
 
 class Public extends Component {
     constructor(props) {
         super(props)
-        this.state = {isCleaning: false, cleanProgress: 0}
+        this.state = {
+            isCleaning: true,
+            cleanProgress: 0,
+            progressStatus: 'Запускаем'
+        }
     }
 
     render() {
@@ -23,7 +28,10 @@ class Public extends Component {
                     </div>
                     <div className="public__info">
                         {this.state.isCleaning ? (
-                            <ProgressBar progress={this.state.cleanProgress} />
+                            <ProgressBar
+                                progress={this.state.cleanProgress}
+                                status={this.state.progressStatus}
+                            />
                         ) : (
                             <PublicInfo
                                 peopleCount={peopleCount}
