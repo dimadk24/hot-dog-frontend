@@ -64,31 +64,31 @@ class CleanPage extends Component {
     constructor(props) {
         super(props)
         /*global VK*/
-        // VK.init(
-        //     () => {
-        //         VK.api(
-        //             'groups.get',
-        //             {
-        //                 filter: 'moder',
-        //                 extended: '1',
-        //                 fields: 'photo_100',
-        //                 v: '5.85'
-        //             },
-        //             (data) => {
-        //                 const publics = convertPublicsFromVkFormat(
-        //                     data.response.items
-        //                 )
-        //                 const publics_count = data.response.count
-        //                 console.log(`Got ${publics_count} publics from VK:`)
-        //                 console.log(publics)
-        //             }
-        //         )
-        //     },
-        //     () => {
-        //         console.log('VK API initialization failed')
-        //     },
-        //     '5.85'
-        // )
+        VK.init(
+            () => {
+                VK.api(
+                    'groups.get',
+                    {
+                        filter: 'moder',
+                        extended: '1',
+                        fields: 'photo_100',
+                        v: '5.85'
+                    },
+                    (data) => {
+                        const publics = convertPublicsFromVkFormat(
+                            data.response.items
+                        )
+                        const publics_count = data.response.count
+                        console.log(`Got ${publics_count} publics from VK:`)
+                        console.log(publics)
+                    }
+                )
+            },
+            () => {
+                console.log('VK API initialization failed')
+            },
+            '5.85'
+        )
     }
 
     async showModal() {
@@ -191,20 +191,20 @@ class CleanPage extends Component {
     resolvePublicName(name) {
         return new Promise((resolve, reject) => {
             /*global VK*/
-            // VK.api(
-            //     'utils.resolveScreenName',
-            //     {
-            //         screen_name: name,
-            //         v: '5.85'
-            //     },
-            //     ({response}) => {
-            //         if (response.type === 'group') {
-            //             // noinspection JSUnresolvedVariable
-            //             resolve(response.object_id)
-            //         }
-            //         reject('not group')
-            //     }
-            // )
+            VK.api(
+                'utils.resolveScreenName',
+                {
+                    screen_name: name,
+                    v: '5.85'
+                },
+                ({response}) => {
+                    if (response.type === 'group') {
+                        // noinspection JSUnresolvedVariable
+                        resolve(response.object_id)
+                    }
+                    reject('not group')
+                }
+            )
         })
     }
 
