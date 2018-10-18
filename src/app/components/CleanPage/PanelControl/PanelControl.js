@@ -8,7 +8,7 @@ class PanelControl extends Component {
                 <HeaderControl text="Обновить">
                     <FaSync />
                 </HeaderControl>
-                <HeaderControl text="Очистить">
+                <HeaderControl text="Очистить" onClick={()=> this.props.onCleanClick()}>
                     <FaBroom />
                 </HeaderControl>
                 <HeaderControl text="Удалить">

@@ -9,44 +9,56 @@ import axios from 'axios'
 
 class CleanPage extends Component {
     state = {
-        showGroupsModal: false,
         publics: []
     }
 
     renderGroups = (groups) => {
         if (!groups.length) return null
-        return Object.keys(groups).map((key, i) => (
-            <Public {...groups[key]} key={i} />
-        ))
+        return groups.map((publik) => <Public {...publik} key={publik.id} />)
     }
 
     async componentWillMount() {
-        const publics = (await axios.get('http://hot-dog.site/api/getPublics', {
+        let publics = await this.loadPublics()
+        const cleanTasks = await this.loadCleanTasks()
+        if (cleanTasks && cleanTasks.length)
+            this.timerId = setInterval(async () => {
+                await this.updateCleanTasks()
+            }, 1500)
+        publics = this.addCleanTasksToPublics(publics, cleanTasks)
+        this.setPublics(publics)
+    }
+
+    componentWillUnmount() {
+        if (this.timerId) {
+            clearInterval(this.timerId)
+        }
+    }
+
+    setPublics(publics) {
+        for (const publik of publics) {
+            if (this.cleanTaskIsFinished(publik.cleanData)) {
+                this.showFinishedAlert(publik)
+            }
+        }
+        this.setState({publics: publics})
+    }
+
+    async loadCleanTasks() {
+        return (await axios.get('https://hot-dog.site/api/getCleanTasks', {
             params: {
                 auth_access_token:
                     '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
             }
         })).data
-        const cleanTasks = (await axios.get(
-            'http://hot-dog.site/api/getCleanTasks',
-            {
-                params: {
-                    auth_access_token:
-                        '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
-                }
+    }
+
+    async loadPublics() {
+        return (await axios.get('https://hot-dog.site/api/getPublics', {
+            params: {
+                auth_access_token:
+                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
             }
-        )).data
-        if (cleanTasks && cleanTasks.length) {
-            for (const cleanTask of cleanTasks) {
-                for (const publik of publics) {
-                    if (publik.id === cleanTask.public_id) {
-                        publik.isCleaning = true
-                        publik.cleanTask = cleanTask
-                    }
-                }
-            }
-        }
-        this.setState({publics: publics})
+        })).data
     }
 
     constructor(props) {
@@ -92,9 +104,21 @@ class CleanPage extends Component {
             console.log(e)
         }
         const newPublic = await this.addPublicAndGetItsData(publicId)
-        this.setState({publics: [newPublic]})
+        newPublic.cleanData = {
+            isCleaning: false
+        }
+        console.log(newPublic)
+        this.setState((prevState) => {
+            console.log(prevState)
+            const publics = prevState.publics.concat(newPublic)
+            console.log(publics)
+            return {publics: publics}
+        })
         newPublic.dogs = await this.getDogsCount(newPublic.id)
-        this.setState({publics: [newPublic]})
+        this.setState((prevState) => {
+            const publics = prevState.publics.concat(newPublic)
+            return {publics: publics}
+        })
     }
 
     async convertPublicLinkToId(link) {
@@ -111,11 +135,52 @@ class CleanPage extends Component {
         return await this.resolvePublicName(name)
     }
 
+    async onStartClean() {
+        const public_ids = this.getPublicIds()
+        const response = await this.startCleanTasks(public_ids)
+        if ('error' in response && response.error.id === 1) {
+            await this.showPowerfulAccessTokenAlert()
+            return await this.onStartClean()
+        } else {
+            const publics = this.setCleaningStateOnPublics()
+            this.setPublics(publics)
+            this.timerId = setInterval(async () => {
+                await this.updateCleanTasks()
+            }, 1500)
+        }
+    }
+
+    setCleaningStateOnPublics() {
+        return this.state.publics.map((item) => {
+            item.cleanData = {
+                isCleaning: true,
+                progress: 0,
+                status: 'Отправляем запрос'
+            }
+            return item
+        })
+    }
+
+    async startCleanTasks(public_ids) {
+        return (await axios.post('https://hot-dog.site/api/startCleanTasks', {
+            auth_access_token:
+                '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844',
+            public_ids: public_ids
+        })).data
+    }
+    cleanTaskIsFinished(cleanTask) {
+        return ['Возникла ошибка', 'Завершили'].includes(cleanTask.status)
+    }
+
+    getPublicIds() {
+        return this.state.publics.map((item) => item.id)
+    }
+
     render() {
         const {publics} = this.state
         return (
             <div className="clean">
-                <PanelControl />
+                <PanelControl onCleanClick={() => this.onStartClean()} />
                 {publics && this.renderGroups(publics)}
                 <AddPublicButton onClick={() => this.showModal()} />
                 {/*{showGroupsModal && <Modal/>}*/}
@@ -123,7 +188,7 @@ class CleanPage extends Component {
         )
     }
 
-    static resolvePublicName(name) {
+    resolvePublicName(name) {
         return new Promise((resolve, reject) => {
             /*global VK*/
             // VK.api(
@@ -152,7 +217,7 @@ class CleanPage extends Component {
     }
 
     async addPublicAndGetItsData(publicId) {
-        return (await axios.post('http://hot-dog.site/api/addPublic', {
+        return (await axios.post('https://hot-dog.site/api/addPublic', {
             auth_access_token:
                 '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844',
             vk_id: publicId
@@ -160,7 +225,8 @@ class CleanPage extends Component {
     }
 
     async getDogsCount(publicId) {
-        return (await axios.get('http://hot-dog.site/api/getDogsCount', {
+        // noinspection JSUnresolvedVariable
+        return (await axios.get('https://hot-dog.site/api/getDogsCount', {
             params: {
                 id: publicId,
                 auth_access_token:
@@ -168,6 +234,70 @@ class CleanPage extends Component {
             }
         })).data.dogs_count
     }
+
+    async showPowerfulAccessTokenAlert() {
+        const response = await swal({
+            title: 'Ошибка доступа',
+            text: 'Введите мощный токен доступа полученный по этой ссылке',
+            content: 'input',
+            button: 'Сохранить!'
+        })
+        return await axios.patch(
+            'https://hot-dog.site/api/setPowerfulAccessToken',
+            {
+                powerful_access_token: response,
+                auth_access_token:
+                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+            }
+        )
+    }
+
+    addCleanTasksToPublics(publics, cleanTasks) {
+        if (cleanTasks && cleanTasks.length) {
+            for (const publik of publics) {
+                for (const cleanTask of cleanTasks) {
+                    // noinspection JSUnresolvedVariable
+                    if (publik.id === cleanTask.public_id)
+                        publik.cleanData = {
+                            isCleaning: true,
+                            progress: cleanTask.progress,
+                            status: cleanTask.status
+                        }
+                }
+                if (!publik.cleanData) {
+                    publik.cleanData = {
+                        isCleaning: false
+                    }
+                }
+            }
+            return publics
+        }
+        return publics.map((publik) => {
+            publik.cleanData = {isCleaning: false}
+            return publik
+        })
+    }
+
+    async getCleanTasks() {
+        return (await axios.get('https://hot-dog.site/api/getCleanTasks', {
+            params: {
+                auth_access_token:
+                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+            }
+        })).data
+    }
+
+    async updateCleanTasks() {
+        const cleanTasks = await this.getCleanTasks()
+        if (!(cleanTasks && cleanTasks.length)) clearInterval(this.timerId)
+        const publics = this.addCleanTasksToPublics(
+            this.state.publics,
+            cleanTasks
+        )
+        this.setPublics(publics)
+    }
+
+    showFinishedAlert(publik) {}
 }
 
 const mapStateToProps = ({clean}) => ({
