@@ -20,6 +20,7 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
+        console.log("TESTING 222");
         const {GetUserGroups} = this.props
         GetUserGroups()
 

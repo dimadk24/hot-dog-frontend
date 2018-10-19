@@ -11,6 +11,7 @@ export default (state = initialState, action) => {
     switch (action.type) {
         case GET_USER_GROUPS: {
             const groups = action.payload
+            console.log('PUT IN STATE', groups)
             return {
                 ...state,
                 groups
@@ -23,8 +24,9 @@ export default (state = initialState, action) => {
 
 export const GetUserGroups = () => {
     return (dispatch) => {
-        const groups = API.getPublicks()
-        console.log('GROUPS RETURNED', groups)
-        dispatch({type: GET_USER_GROUPS, payload: groups})
+        const groups = API.getGroups()
+        groups.then((res) => {
+            dispatch({type: GET_USER_GROUPS, payload: res})
+        })
     }
 }

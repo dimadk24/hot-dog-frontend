@@ -5,13 +5,8 @@ const API_URL = 'someurl'
 const VK = window.VK
 
 export const API = {
-    getPublicks: () => {
-        let returnGroups = []
-        getGroupsPromise.then((groups) => {
-            returnGroups = groups
-        })
-        console.log('RETURN GROUPS', returnGroups)
-        return returnGroups
+    getGroups: () => {
+        return getGroupsPromise
     }
 }
 
@@ -28,9 +23,9 @@ const getGroupsPromise = new Promise((resolve, reject) => {
                 },
                 (data) => {
                     const groups = normalizeVKGroupsData(data.response.items)
-                    const groupsCount = data.response.count
-                    console.log(`Got ${groupsCount} publics from VK:`)
-                    console.log(groups)
+                    // const groupsCount = data.response.count
+                    // console.log(`Got ${groupsCount} publics from VK:`)
+                    // console.log(groups)
                     resolve(groups)
                 }
             )
