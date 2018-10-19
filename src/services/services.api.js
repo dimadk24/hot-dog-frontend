@@ -6,37 +6,43 @@ const VK = window.VK
 
 export const API = {
     getPublicks: () => {
-        let returnGroups = [];
-        VK.init(
-            () => {
-                VK.api(
-                    'groups.get',
-                    {
-                        filter: 'moder',
-                        extended: '1',
-                        fields: 'photo_100',
-                        v: '5.85'
-                    },
-                    (data) => {
-                        const groups = normalizeVKGroupsData(
-                            data.response.items
-                        )
-                        const groupsCount = data.response.count
-                        console.log(`Got ${groupsCount} publics from VK:`)
-                        console.log(groups)
-                        returnGroups = groups
-                    }
-                )
-            },
-            () => {
-                console.log('VK API initialization failed')
-            },
-            '5.85'
-        )
-        console.log("RETURN GROUPS", returnGroups);
+        let returnGroups = []
+        getGroupsPromise.then((groups) => {
+            returnGroups = groups
+        })
+        console.log('RETURN GROUPS', returnGroups)
         return returnGroups
     }
 }
+
+const getGroupsPromise = new Promise((resolve, reject) => {
+    VK.init(
+        () => {
+            VK.api(
+                'groups.get',
+                {
+                    filter: 'moder',
+                    extended: '1',
+                    fields: 'photo_100',
+                    v: '5.85'
+                },
+                (data) => {
+                    const groups = normalizeVKGroupsData(data.response.items)
+                    const groupsCount = data.response.count
+                    console.log(`Got ${groupsCount} publics from VK:`)
+                    console.log(groups)
+                    resolve(groups)
+                }
+            )
+        },
+        () => {
+            console.log('VK API initialization failed')
+            reject('Groups fetch failed')
+        },
+        '5.85'
+    )
+})
+
 const normalizeVKGroupsData = (array) => {
     return array.map(converter)
 }
