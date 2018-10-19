@@ -6,6 +6,7 @@ import {bindActionCreators} from 'redux'
 import {AddPublicButton} from './PublicGroup/AddPublicButton'
 import swal from 'sweetalert'
 import axios from 'axios'
+import {API} from '../../../services/services.api'
 
 class CleanPage extends Component {
     state = {
@@ -18,14 +19,14 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
-        let publics = await this.loadPublics()
+        let groups = await this.loadGroups()
         const cleanTasks = await this.loadCleanTasks()
         if (cleanTasks && cleanTasks.length)
             this.timerId = setInterval(async () => {
                 await this.updateCleanTasks()
             }, 1500)
-        publics = this.addCleanTasksToPublics(publics, cleanTasks)
-        this.setPublics(publics)
+        groups = this.addCleanTaskToGroups(groups, cleanTasks)
+        this.setGroups(groups)
     }
 
     componentWillUnmount() {
@@ -34,13 +35,13 @@ class CleanPage extends Component {
         }
     }
 
-    setPublics(publics) {
-        for (const publik of publics) {
-            if (this.cleanTaskIsFinished(publik.cleanData)) {
-                this.showFinishedAlert(publik)
+    setGroups(groups) {
+        for (const group of groups) {
+            if (this.cleanTaskIsFinished(group.cleanData)) {
+                this.showFinishedAlert(group)
             }
         }
-        this.setState({publics: publics})
+        this.setState({publics: groups})
     }
 
     async loadCleanTasks() {
@@ -52,7 +53,7 @@ class CleanPage extends Component {
         })).data
     }
 
-    async loadPublics() {
+    async loadGroups() {
         return (await axios.get('https://hot-dog.site/api/getPublics', {
             params: {
                 auth_access_token:
@@ -63,32 +64,7 @@ class CleanPage extends Component {
 
     constructor(props) {
         super(props)
-        /*global VK*/
-        VK.init(
-            () => {
-                VK.api(
-                    'groups.get',
-                    {
-                        filter: 'moder',
-                        extended: '1',
-                        fields: 'photo_100',
-                        v: '5.85'
-                    },
-                    (data) => {
-                        const publics = convertPublicsFromVkFormat(
-                            data.response.items
-                        )
-                        const publics_count = data.response.count
-                        console.log(`Got ${publics_count} publics from VK:`)
-                        console.log(publics)
-                    }
-                )
-            },
-            () => {
-                console.log('VK API initialization failed')
-            },
-            '5.85'
-        )
+        API.getPublicks()
     }
 
     async showModal() {
@@ -143,7 +119,7 @@ class CleanPage extends Component {
             return await this.onStartClean()
         } else {
             const publics = this.setCleaningStateOnPublics()
-            this.setPublics(publics)
+            this.setGroups(publics)
             this.timerId = setInterval(async () => {
                 await this.updateCleanTasks()
             }, 1500)
@@ -252,7 +228,7 @@ class CleanPage extends Component {
         )
     }
 
-    addCleanTasksToPublics(publics, cleanTasks) {
+    addCleanTaskToGroups(publics, cleanTasks) {
         if (cleanTasks && cleanTasks.length) {
             for (const publik of publics) {
                 for (const cleanTask of cleanTasks) {
@@ -290,11 +266,11 @@ class CleanPage extends Component {
     async updateCleanTasks() {
         const cleanTasks = await this.getCleanTasks()
         if (!(cleanTasks && cleanTasks.length)) clearInterval(this.timerId)
-        const publics = this.addCleanTasksToPublics(
+        const publics = this.addCleanTaskToGroups(
             this.state.publics,
             cleanTasks
         )
-        this.setPublics(publics)
+        this.setGroups(publics)
     }
 
     showFinishedAlert(publik) {}
@@ -310,16 +286,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(CleanPage)
-
-function convertPublicsFromVkFormat(array) {
-    function converter(item) {
-        // noinspection JSUnresolvedVariable
-        return {
-            avatar_url: item.photo_100,
-            id: item.id,
-            name: item.name
-        }
-    }
-
-    return array.map(converter)
-}
