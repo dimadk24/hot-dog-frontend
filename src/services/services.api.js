@@ -5,7 +5,8 @@ const API_URL = 'someurl'
 const VK = window.VK
 
 export const API = {
-    getPublicks: () =>
+    getPublicks: () => {
+        let returnGroups = [];
         VK.init(
             () => {
                 VK.api(
@@ -23,6 +24,7 @@ export const API = {
                         const groupsCount = data.response.count
                         console.log(`Got ${groupsCount} publics from VK:`)
                         console.log(groups)
+                        returnGroups = groups
                     }
                 )
             },
@@ -31,6 +33,9 @@ export const API = {
             },
             '5.85'
         )
+        console.log("RETURN GROUPS", returnGroups);
+        return returnGroups
+    }
 }
 const normalizeVKGroupsData = (array) => {
     return array.map(converter)

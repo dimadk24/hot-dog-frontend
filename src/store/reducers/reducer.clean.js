@@ -1,34 +1,30 @@
-export const REFRESH_GROUPS = 'groups/REFRESH_GROUPS'
-export const CLEAN_GROUPS = 'groups/CLEAN_GROUPS'
-export const DELETE_GROUPS = 'groups/DELETE_GROUPS'
-export const SELECT_GROUP = 'groups/SELECT_GROUP'
-export const ADD_GROUP = 'groups/ADD_GROUP'
-export const START_COUNTING_DELETED_PEOPLE =
-    'groups/START_COUNTING_DELETED_PEOPLE'
-export const STOP_COUNTING_DELETED_PEOPLE =
-    'groups/STOP_COUNTING_DELETED_PEOPLE'
+import {API} from '../../services/services.api'
+
+export const GET_USER_GROUPS = 'groups/GET_USER_GROUPS'
 
 const groupID = 1
 const initialState = {
-    groups: {
-        [groupID]: {
-            groupName: 'My group',
-            peopleCount: 500000,
-            deletedPeople: 120,
-            isLoading: true
-        }
-    }
+    groups: []
 }
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case ADD_GROUP:
-            const groupToAdd = action.payload
+        case GET_USER_GROUPS: {
+            const groups = action.payload
             return {
                 ...state,
-                groups: [...state.groups, groupToAdd]
+                groups
             }
+        }
         default:
             return state
+    }
+}
+
+export const GetUserGroups = () => {
+    return (dispatch) => {
+        const groups = API.getPublicks()
+        console.log('GROUPS RETURNED', groups)
+        dispatch({type: GET_USER_GROUPS, payload: groups})
     }
 }

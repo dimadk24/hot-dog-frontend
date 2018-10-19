@@ -7,6 +7,7 @@ import {AddPublicButton} from './PublicGroup/AddPublicButton'
 import swal from 'sweetalert'
 import axios from 'axios'
 import {API} from '../../../services/services.api'
+import {GetUserGroups} from '../../../store/reducers/reducer.clean'
 
 class CleanPage extends Component {
     state = {
@@ -19,6 +20,9 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
+        const {GetUserGroups} = this.props
+        GetUserGroups()
+
         let groups = await this.loadGroups()
         const cleanTasks = await this.loadCleanTasks()
         if (cleanTasks && cleanTasks.length)
@@ -60,11 +64,6 @@ class CleanPage extends Component {
                     '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
             }
         })).data
-    }
-
-    constructor(props) {
-        super(props)
-        API.getPublicks()
     }
 
     async showModal() {
@@ -280,8 +279,8 @@ const mapStateToProps = ({clean}) => ({
     groups: clean.groups
 })
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch)
-
+const mapDispatchToProps = (dispatch) =>
+    bindActionCreators({GetUserGroups}, dispatch)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
