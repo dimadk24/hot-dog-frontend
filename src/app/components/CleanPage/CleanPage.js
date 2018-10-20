@@ -6,7 +6,11 @@ import {bindActionCreators} from 'redux'
 import {AddPublicButton} from './PublicGroup/AddPublicButton'
 import swal from 'sweetalert'
 import axios from 'axios'
-import {GetUserGroups, LoadGroups} from '../../../store/reducers/reducer.clean'
+import {
+    GetUserGroups,
+    LoadGroups,
+    LoadCleanTasks
+} from '../../../store/reducers/reducer.clean'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили']
 
@@ -16,9 +20,10 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
-        const {GetUserGroups, LoadGroups} = this.props
+        const {GetUserGroups, LoadGroups, LoadCleanTasks} = this.props
         GetUserGroups()
         LoadGroups()
+        LoadCleanTasks()
 
         let groups = await this.loadGroups()
 
@@ -281,11 +286,12 @@ class CleanPage extends Component {
 
 const mapStateToProps = ({clean}) => ({
     groups: clean.groups,
-    hotDogsGroups: clean.hotDogsGroups
+    hotDogsGroups: clean.hotDogsGroups,
+    cleanTasks: clean.cleanTasks
 })
 
 const mapDispatchToProps = (dispatch) =>
-    bindActionCreators({GetUserGroups, LoadGroups}, dispatch)
+    bindActionCreators({GetUserGroups, LoadGroups, LoadCleanTasks}, dispatch)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

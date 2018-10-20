@@ -11,7 +11,9 @@ export const API = {
         return getGroupsPromise
     },
     loadGroups: () =>
-        axios.get(DOGS_API_URL + '/getPublics', authHeaderDogsAPI())
+        axios.get(DOGS_API_URL + '/getPublics', authHeaderDogsAPI()),
+    loadCleanTasks: () =>
+        axios.get(DOGS_API_URL + 'getCleanTasks', authHeaderDogsAPI())
 }
 
 const getGroupsPromise = new Promise((resolve, reject) => {

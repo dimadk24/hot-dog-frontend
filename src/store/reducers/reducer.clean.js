@@ -2,7 +2,11 @@ import {API} from '../../services/services.api'
 
 export const GET_USER_GROUPS = 'groups/GET_USER_GROUPS'
 export const LOAD_GROUPS = 'groups/LOAD_GROUPS'
-
+export const LOAD_CLEAN_TASKS = {
+    Load: 'tasks/LOAD_CLEAN_TASKS',
+    Loaded: 'tasks/CLEAN_TASKS_LOADED',
+    Errors: 'tasks/CLEAN_TASKS_ERRORS'
+}
 const groupID = 1
 const initialState = {
     groups: {
@@ -11,6 +15,11 @@ const initialState = {
         errors: []
     },
     hotDogsGroups: {
+        data: [],
+        loading: true,
+        errors: []
+    },
+    cleanTasks: {
         data: [],
         loading: true,
         errors: []
@@ -41,19 +50,43 @@ export default (state = initialState, action) => {
 
 export const GetUserGroups = () => {
     return (dispatch) => {
+        startLoading(LOAD_GROUPS, dispatch)
         const groups = API.getUserGroups()
         groups.then((res) => {
             dispatch({type: GET_USER_GROUPS, payload: res})
         })
+        stopLoading(LOAD_GROUPS, dispatch)
     }
 }
 
 export const LoadGroups = () => {
     return (dispatch) => {
+        startLoading(LOAD_GROUPS, dispatch)
         const groupsData = API.loadGroups().data
         dispatch({
             type: LOAD_GROUPS,
             payload: groupsData
         })
+        stopLoading(LOAD_GROUPS, dispatch)
     }
+}
+
+export const LoadCleanTasks = () => {
+    return (dispatch) => {
+        startLoading(LOAD_CLEAN_TASKS, dispatch)
+        const cleanTasksData = API.loadCleanTasks().data
+        dispatch({Type: LOAD_CLEAN_TASKS.Loaded, payload: cleanTasksData})
+        stopLoading(LOAD_CLEAN_TASKS, dispatch)
+    }
+}
+
+const startLoading = (loadingProperty, dispatch) => {
+    dispatch({
+        type: loadingProperty.Load
+    })
+}
+const stopLoading = (loadingProperty, dispatch) => {
+    dispatch({
+        type: loadingProperty.Loaded
+    })
 }
