@@ -15,6 +15,7 @@ export const LOAD_CLEAN_TASKS = {
     Loaded: 'tasks/CLEAN_TASKS_LOADED',
     Errors: 'tasks/CLEAN_TASKS_ERRORS'
 }
+
 const initialState = {
     groups: {
         data: [],
@@ -35,7 +36,16 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case GET_USER_GROUPS: {
+        case GET_USER_GROUPS.Load: {
+            return {
+                ...state,
+                groups: {
+                    ...state.groups,
+                    loading: true
+                }
+            }
+        }
+        case GET_USER_GROUPS.Loaded: {
             const groups = action.payload
             console.log('PUT IN STATE', groups)
             return {
@@ -43,11 +53,40 @@ export default (state = initialState, action) => {
                 groups
             }
         }
-        case LOAD_GROUPS: {
+        case LOAD_GROUPS.Load: {
+            return {
+                ...state,
+                hotDogsGroups: {
+                    ...state.hotDogsGroups,
+                    loading: true
+                }
+            }
+        }
+        case LOAD_GROUPS.Loaded: {
             const hotDogsGroups = action.payload
             return {
                 ...state,
                 hotDogsGroups
+            }
+        }
+        case LOAD_CLEAN_TASKS.Load: {
+            return {
+                ...state,
+                cleanTasks: {
+                    ...state.cleanTasks,
+                    loading: true
+                }
+            }
+        }
+        case LOAD_CLEAN_TASKS.Loaded: {
+            const cleanTasks = action.payload
+            return {
+                ...state,
+                cleanTasks: {
+                    loading: false,
+                    data: cleanTasks,
+                    errors: []
+                }
             }
         }
         default:
@@ -60,7 +99,7 @@ export const GetUserGroups = () => {
         startLoading(LOAD_GROUPS, dispatch)
         const groups = API.getUserGroups()
         groups.then((res) => {
-            dispatch({type: GET_USER_GROUPS, payload: res})
+            dispatch({type: GET_USER_GROUPS.Loaded, payload: res})
         })
         stopLoading(LOAD_GROUPS, dispatch)
     }
@@ -71,7 +110,7 @@ export const LoadGroups = () => {
         startLoading(LOAD_GROUPS, dispatch)
         const groupsData = API.loadGroups().data
         dispatch({
-            type: LOAD_GROUPS,
+            type: LOAD_GROUPS.Loaded,
             payload: groupsData
         })
         stopLoading(LOAD_GROUPS, dispatch)
