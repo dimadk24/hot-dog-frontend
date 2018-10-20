@@ -4,10 +4,14 @@ const API_URL = 'someurl'
 
 const VK = window.VK
 
+const DOGS_API_URL = 'https://hot-dog.site/api'
+
 export const API = {
-    getGroups: () => {
+    getUserGroups: () => {
         return getGroupsPromise
-    }
+    },
+    loadGroups: () =>
+        axios.get(DOGS_API_URL + '/getPublics', authHeaderDogsAPI())
 }
 
 const getGroupsPromise = new Promise((resolve, reject) => {
@@ -51,6 +55,11 @@ const converter = (item) => {
     }
 }
 
-const authHeader = () => {
-    return {}
+const authHeaderDogsAPI = () => {
+    return {
+        params: {
+            auth_access_token:
+                '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+        }
+    }
 }

@@ -6,32 +6,35 @@ import {bindActionCreators} from 'redux'
 import {AddPublicButton} from './PublicGroup/AddPublicButton'
 import swal from 'sweetalert'
 import axios from 'axios'
-import {API} from '../../../services/services.api'
-import {GetUserGroups} from '../../../store/reducers/reducer.clean'
+import {GetUserGroups, LoadGroups} from '../../../store/reducers/reducer.clean'
+
+const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили']
 
 class CleanPage extends Component {
     state = {
         publics: []
     }
 
-    renderGroups = (groups) => {
-        if (!groups.length) return null
-        return groups.map((publik) => <Public {...publik} key={publik.id} />)
-    }
-
     async componentWillMount() {
-        console.log("TESTING 222");
-        const {GetUserGroups} = this.props
+        const {GetUserGroups, LoadGroups} = this.props
         GetUserGroups()
+        LoadGroups()
 
         let groups = await this.loadGroups()
+
         const cleanTasks = await this.loadCleanTasks()
+
         if (cleanTasks && cleanTasks.length)
             this.timerId = setInterval(async () => {
                 await this.updateCleanTasks()
             }, 1500)
         groups = this.addCleanTaskToGroups(groups, cleanTasks)
         this.setGroups(groups)
+    }
+
+    renderGroups = (groups) => {
+        if (!groups.length) return null
+        return groups.map((publik) => <Public {...publik} key={publik.id} />)
     }
 
     componentWillUnmount() {
@@ -145,23 +148,11 @@ class CleanPage extends Component {
         })).data
     }
     cleanTaskIsFinished(cleanTask) {
-        return ['Возникла ошибка', 'Завершили'].includes(cleanTask.status)
+        return CLEAN_TASK_ERRORS.includes(cleanTask.status)
     }
 
     getPublicIds() {
         return this.state.publics.map((item) => item.id)
-    }
-
-    render() {
-        const {publics} = this.state
-        return (
-            <div className="clean">
-                <PanelControl onCleanClick={() => this.onStartClean()} />
-                {publics && this.renderGroups(publics)}
-                <AddPublicButton onClick={() => this.showModal()} />
-                {/*{showGroupsModal && <Modal/>}*/}
-            </div>
-        )
     }
 
     resolvePublicName(name) {
@@ -274,14 +265,27 @@ class CleanPage extends Component {
     }
 
     showFinishedAlert(publik) {}
+
+    render() {
+        const {publics} = this.state
+        return (
+            <div className="clean">
+                <PanelControl onCleanClick={() => this.onStartClean()} />
+                {publics && this.renderGroups(publics)}
+                <AddPublicButton onClick={() => this.showModal()} />
+                {/*{showGroupsModal && <Modal/>}*/}
+            </div>
+        )
+    }
 }
 
 const mapStateToProps = ({clean}) => ({
-    groups: clean.groups
+    groups: clean.groups,
+    hotDogsGroups: clean.hotDogsGroups
 })
 
 const mapDispatchToProps = (dispatch) =>
-    bindActionCreators({GetUserGroups}, dispatch)
+    bindActionCreators({GetUserGroups, LoadGroups}, dispatch)
 export default connect(
     mapStateToProps,
     mapDispatchToProps
