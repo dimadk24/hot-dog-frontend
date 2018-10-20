@@ -1,13 +1,20 @@
 import {API} from '../../services/services.api'
 
-export const GET_USER_GROUPS = 'groups/GET_USER_GROUPS'
-export const LOAD_GROUPS = 'groups/LOAD_GROUPS'
+export const GET_USER_GROUPS = {
+    Load: 'groups/USER_GROUPS_LOAD',
+    Loaded: 'groups/USER_GROUPS_LOADED',
+    Errors: 'groups/USER_GROUPS_ERRORS'
+}
+export const LOAD_GROUPS = {
+    Load: 'groups/GROUPS_LOAD',
+    Loaded: 'groups/GROUPS_LOADED',
+    Errors: 'groups/GROUPS_ERRORS'
+}
 export const LOAD_CLEAN_TASKS = {
     Load: 'tasks/LOAD_CLEAN_TASKS',
     Loaded: 'tasks/CLEAN_TASKS_LOADED',
     Errors: 'tasks/CLEAN_TASKS_ERRORS'
 }
-const groupID = 1
 const initialState = {
     groups: {
         data: [],
