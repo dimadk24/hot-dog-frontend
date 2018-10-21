@@ -214,14 +214,11 @@ class CleanPage extends Component {
             content: 'input',
             button: 'Сохранить!'
         })
-        return await axios.patch(
-            'https://hot-dog.site/api/setAccessToken',
-            {
-                access_token: response,
-                user_vk_id: window.user_id,
-                auth_key: window.auth_key
-            }
-        )
+        return await axios.patch('https://hot-dog.site/api/setAccessToken', {
+            access_token: response,
+            user_vk_id: window.user_id,
+            auth_key: window.auth_key
+        })
     }
 
     addCleanTaskToGroups(publics, cleanTasks) {
@@ -261,7 +258,11 @@ class CleanPage extends Component {
 
     async updateCleanTasks() {
         const cleanTasks = await this.getCleanTasks()
-        if (!(cleanTasks && cleanTasks.length)) clearInterval(this.timerId)
+        if (!(cleanTasks && cleanTasks.length)) {
+            clearInterval(this.timerId)
+            await this.refreshPublics()
+            return
+        }
         const publics = this.addCleanTaskToGroups(
             this.state.publics,
             cleanTasks
@@ -281,6 +282,28 @@ class CleanPage extends Component {
                 {/*{showGroupsModal && <Modal/>}*/}
             </div>
         )
+    }
+
+    async refreshPublics() {
+        let freshPublics = []
+        for (const publik of this.state.publics) {
+            const freshPublic = await this.getFreshPublic(publik.id)
+            freshPublic.cleanData = {
+                isCleaning: false
+            }
+            freshPublics.push(freshPublic)
+        }
+        this.setGroups(freshPublics)
+    }
+
+    async getFreshPublic(public_id) {
+        return (await axios.get('https://hot-dog.site/api/refreshPublic', {
+            params: {
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key,
+                id: public_id
+            }
+        })).data
     }
 }
 
