@@ -108,21 +108,26 @@ export const GetUserGroups = () => {
 export const LoadGroups = () => {
     return (dispatch) => {
         startLoading(LOAD_GROUPS, dispatch)
-        const groupsData = API.loadGroups().data
-        dispatch({
-            type: LOAD_GROUPS.Loaded,
-            payload: groupsData
+        API.loadGroups().then((response) => {
+            const groupsData = response.data
+            dispatch({
+                type: LOAD_GROUPS.Loaded,
+                payload: groupsData
+            })
+            stopLoading(LOAD_GROUPS, dispatch)
         })
-        stopLoading(LOAD_GROUPS, dispatch)
     }
 }
 
 export const LoadCleanTasks = () => {
     return (dispatch) => {
         startLoading(LOAD_CLEAN_TASKS, dispatch)
-        const cleanTasksData = API.loadCleanTasks().data
-        dispatch({Type: LOAD_CLEAN_TASKS.Loaded, payload: cleanTasksData})
-        stopLoading(LOAD_CLEAN_TASKS, dispatch)
+
+        API.loadCleanTasks().then((response) => {
+            const cleanTasksData = response.data
+            dispatch({type: LOAD_CLEAN_TASKS.Loaded, payload: cleanTasksData})
+            stopLoading(LOAD_CLEAN_TASKS, dispatch)
+        })
     }
 }
 

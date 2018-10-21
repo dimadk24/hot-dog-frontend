@@ -12,7 +12,7 @@ import {
     LoadCleanTasks
 } from '../../../store/reducers/reducer.clean'
 
-const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили']
+const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
 class CleanPage extends Component {
     state = {
@@ -60,8 +60,8 @@ class CleanPage extends Component {
     async loadCleanTasks() {
         return (await axios.get('https://hot-dog.site/api/getCleanTasks', {
             params: {
-                auth_access_token:
-                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
             }
         })).data
     }
@@ -69,8 +69,8 @@ class CleanPage extends Component {
     async loadGroups() {
         return (await axios.get('https://hot-dog.site/api/getPublics', {
             params: {
-                auth_access_token:
-                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
             }
         })).data
     }
@@ -147,8 +147,8 @@ class CleanPage extends Component {
 
     async startCleanTasks(public_ids) {
         return (await axios.post('https://hot-dog.site/api/startCleanTasks', {
-            auth_access_token:
-                '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844',
+            user_vk_id: window.user_id,
+            auth_key: window.auth_key,
             public_ids: public_ids
         })).data
     }
@@ -190,8 +190,8 @@ class CleanPage extends Component {
 
     async addPublicAndGetItsData(publicId) {
         return (await axios.post('https://hot-dog.site/api/addPublic', {
-            auth_access_token:
-                '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844',
+            user_vk_id: window.user_id,
+            auth_key: window.auth_key,
             vk_id: publicId
         })).data
     }
@@ -201,8 +201,8 @@ class CleanPage extends Component {
         return (await axios.get('https://hot-dog.site/api/getDogsCount', {
             params: {
                 id: publicId,
-                auth_access_token:
-                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
             }
         })).data.dogs_count
     }
@@ -215,11 +215,11 @@ class CleanPage extends Component {
             button: 'Сохранить!'
         })
         return await axios.patch(
-            'https://hot-dog.site/api/setPowerfulAccessToken',
+            'https://hot-dog.site/api/setAccessToken',
             {
-                powerful_access_token: response,
-                auth_access_token:
-                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+                access_token: response,
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
             }
         )
     }
@@ -253,8 +253,8 @@ class CleanPage extends Component {
     async getCleanTasks() {
         return (await axios.get('https://hot-dog.site/api/getCleanTasks', {
             params: {
-                auth_access_token:
-                    '2c760152aad7cffcd688e7a0e7bc9b23904c522efeb98fc4f27c0ed89a084eb329aa3e23d2bf28d591844'
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
             }
         })).data
     }
