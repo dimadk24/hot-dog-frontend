@@ -123,7 +123,8 @@ class CleanPage extends Component {
         const public_ids = this.getPublicIds()
         const response = await this.startCleanTasks(public_ids)
         if ('error' in response && response.error.id === 1) {
-            await this.showPowerfulAccessTokenAlert()
+            const accessToken = await this.getAccessTokenFromUser()
+            await this.setAccessToken(accessToken)
             return await this.onStartClean()
         } else {
             const publics = this.setCleaningStateOnPublics()
@@ -207,15 +208,20 @@ class CleanPage extends Component {
         })).data.dogs_count
     }
 
-    async showPowerfulAccessTokenAlert() {
+    async getAccessTokenFromUser() {
         const response = await swal({
             title: 'Ошибка доступа',
-            text: 'Введите мощный токен доступа полученный по этой ссылке',
+            text: 'Введите токен доступа полученный по этой ссылке: https://oauth.vk.com/authorize?client_id=6726221&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token&v=5.85&scope=groups,offline',
             content: 'input',
             button: 'Сохранить!'
         })
+        console.log(response)
+        return response
+    }
+
+    async setAccessToken(token) {
         return await axios.patch('https://hot-dog.site/api/setAccessToken', {
-            access_token: response,
+            access_token: token,
             user_vk_id: window.user_id,
             auth_key: window.auth_key
         })
