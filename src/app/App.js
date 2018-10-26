@@ -1,8 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import {BrowserRouter, Route, Switch} from 'react-router-dom'
 import CleanPage from './components/CleanPage/CleanPage'
-import Navigation from './components/Navigation'
-import HomePage from './components/HomePage/HomePage'
 import * as Sentry from '@sentry/browser'
 
 if (process.env.NODE_ENV === 'production') {
