@@ -5,13 +5,16 @@ class PanelControl extends Component {
     render() {
         return (
             <div className="panel-control">
-                <HeaderControl text="Обновить">
+                <HeaderControl text="Обновить" style={{visibility: 'hidden'}}>
                     <FaSync />
                 </HeaderControl>
-                <HeaderControl text="Очистить" onClick={()=> this.props.onCleanClick()}>
+                <HeaderControl
+                    text="Очистить"
+                    onClick={() => this.props.onCleanClick()}
+                >
                     <FaBroom />
                 </HeaderControl>
-                <HeaderControl text="Удалить">
+                <HeaderControl text="Удалить" style={{visibility: 'hidden'}}>
                     <FaTrashAlt />
                 </HeaderControl>
             </div>

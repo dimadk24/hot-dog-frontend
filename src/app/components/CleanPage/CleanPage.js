@@ -11,6 +11,8 @@ import {
     LoadGroups,
     LoadCleanTasks
 } from '../../../store/reducers/reducer.clean'
+import ReactDOM from 'react-dom'
+import {InputModal} from './InputModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
@@ -88,6 +90,7 @@ class CleanPage extends Component {
             console.log(e)
         }
         const newPublic = await this.addPublicAndGetItsData(publicId)
+        newPublic.dogs = 'анализ'
         newPublic.cleanData = {
             isCleaning: false
         }
@@ -98,10 +101,14 @@ class CleanPage extends Component {
             console.log(publics)
             return {publics: publics}
         })
-        newPublic.dogs = await this.getDogsCount(newPublic.id)
+        const dogs = await this.getDogsCount(newPublic.id)
         this.setState((prevState) => {
-            const publics = prevState.publics.concat(newPublic)
-            return {publics: publics}
+            const alreadyAddedPublic = this.getPublicById(
+                prevState.publics,
+                newPublic.id
+            )
+            alreadyAddedPublic.dogs = dogs
+            return {publics: prevState.publics}
         })
     }
 
@@ -153,6 +160,7 @@ class CleanPage extends Component {
             public_ids: public_ids
         })).data
     }
+
     cleanTaskIsFinished(cleanTask) {
         return CLEAN_TASK_ERRORS.includes(cleanTask.status)
     }
@@ -209,14 +217,20 @@ class CleanPage extends Component {
     }
 
     async getAccessTokenFromUser() {
+        let wrapper = window.document.createElement('div')
+        ReactDOM.render(<InputModal />, wrapper)
+        let el = wrapper.firstChild
         const response = await swal({
-            title: 'Ошибка доступа',
-            text: 'Введите токен доступа полученный по этой ссылке: https://oauth.vk.com/authorize?client_id=6726221&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token&v=5.85&scope=groups,offline',
-            content: 'input',
-            button: 'Сохранить!'
+            title: 'Упс. Мы не можем очистить ваши сообщества',
+            content: el,
+            buttons: {
+                confirm: {
+                    text: 'Сохранить и запустить!',
+                    value: ''
+                }
+            }
         })
-        console.log(response)
-        return response
+        return this.getAccessTokenFromLink(response)
     }
 
     async setAccessToken(token) {
@@ -310,6 +324,19 @@ class CleanPage extends Component {
                 id: public_id
             }
         })).data
+    }
+
+    getAccessTokenFromLink(link) {
+        const searchStartStr = '#access_token='
+        const searchEndStr = '&expires_in='
+        return link.slice(
+            link.indexOf(searchStartStr) + searchStartStr.length,
+            link.indexOf(searchEndStr)
+        )
+    }
+
+    getPublicById(publics, public_id) {
+        return publics.find((item) => item.id === public_id)
     }
 }
 

@@ -3,6 +3,11 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom'
 import CleanPage from './components/CleanPage/CleanPage'
 import Navigation from './components/Navigation'
 import HomePage from './components/HomePage/HomePage'
+import * as Sentry from '@sentry/browser';
+
+Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+});
 
 class App extends Component {
     componentWillMount() {
@@ -10,13 +15,23 @@ class App extends Component {
         window.auth_key = getQueryParam('auth_key')
     }
 
+    componentDidCatch(error, errorInfo) {
+        this.setState({ error });
+        Sentry.withScope(scope => {
+            Object.keys(errorInfo).forEach(key => {
+                scope.setExtra(key, errorInfo[key]);
+            });
+            Sentry.captureException(error);
+        });
+    }
+
     render() {
         return (
             <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <Fragment>
-                    <Navigation />
+                    {/*<Navigation />*/}
                     <Switch>
-                        <Route exact path="/" component={HomePage} />
+                        <Route path="/" component={CleanPage} />
                         <Route path="/clean" component={CleanPage} />
                     </Switch>
                 </Fragment>

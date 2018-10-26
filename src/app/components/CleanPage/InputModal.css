@@ -1,0 +1,32 @@
+.modal__text > p {
+    margin: 5px 0;
+}
+
+.modal__text > p {
+    margin: 5px 0;
+}
+
+.modal__text {
+    font-size: 1.02em;
+}
+
+.modal__text > input {
+    padding: 4px 7px;
+    border-radius: 5px;
+    box-shadow: none;
+    border: 1px solid black;
+    font-size: 14px;
+    width: 350px;
+}
+
+.modal__text > p > a,
+.modal__text > p > a:hover,
+.modal__text > p > a:active {
+    text-decoration: none;
+    transition-duration: 300ms;
+}
+
+.modal__text > p > a:hover,
+.modal__text > p > a:active {
+    color: darkgreen;
+}

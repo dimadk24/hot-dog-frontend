@@ -1,16 +1,18 @@
 import React, {Component} from 'react'
+import {Link} from 'react-router-dom'
 
 class HomePage extends Component {
     render() {
         return (
             <div className="home">
                 <div className="intro">
-                    <div className="intro__header">Очистка от собачек</div>
-                    <div className="intro__text">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit. Ab accusantium alias consectetur dicta dignissimos
-                        eligendi est facilis, fugiat id, labore libero maiores,
-                        natus optio qui quis sed sint suscipit voluptatem.
+                    <div className="intro__header">
+                        <Link
+                            to={'/clean'}
+                            style={{width: '100%', height: '100%'}}
+                        >
+                            Очистка от собачек
+                        </Link>
                     </div>
                 </div>
             </div>
