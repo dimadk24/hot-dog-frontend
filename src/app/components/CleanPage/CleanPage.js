@@ -13,6 +13,7 @@ import {
 } from '../../../store/reducers/reducer.clean'
 import ReactDOM from 'react-dom'
 import {InputModal} from './InputModal'
+import {VideoGuide} from './VideoGuide'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
@@ -299,6 +300,7 @@ class CleanPage extends Component {
                 <PanelControl onCleanClick={() => this.onStartClean()} />
                 {publics && this.renderGroups(publics)}
                 <AddPublicButton onClick={() => this.showModal()} />
+                <VideoGuide />
                 {/*{showGroupsModal && <Modal/>}*/}
             </div>
         )
