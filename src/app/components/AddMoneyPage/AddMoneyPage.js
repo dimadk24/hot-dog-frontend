@@ -59,7 +59,7 @@ class AddMoneyPage extends React.Component {
                     <input
                         type="hidden"
                         name="successURL"
-                        value={`https://hot-dog.site?${window.urlParams}`}
+                        value="https://vk.com/app6731681_-171466987"
                     />
                     <button type="submit" className="submit-button">
                         Пополнить

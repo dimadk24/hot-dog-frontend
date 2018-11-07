@@ -26,7 +26,7 @@ class App extends Component {
     async componentWillMount() {
         window.user_id = getQueryParam('viewer_id')
         window.auth_key = getQueryParam('auth_key')
-        this.setBalance(await this.getUserBalance())
+        await this.updateBalance()
     }
 
     async getUserBalance() {
@@ -48,6 +48,10 @@ class App extends Component {
         })
     }
 
+    async updateBalance() {
+        this.setBalance(await this.getUserBalance())
+    }
+
     render() {
         return (
             <BrowserRouter basename={process.env.PUBLIC_URL}>
@@ -57,7 +61,7 @@ class App extends Component {
                         <Route exact path="/" render={
                             (props) =>
                                 <CleanPage balance={this.state.balance}
-                                           onChangeBalance={(balance) => this.setBalance(balance)}/>
+                                           updateBalance={async () => await this.updateBalance()}/>
                         }/>
                         <Route path="/clean" component={CleanPage}/>
                         <Route path={"/add_money"} component={AddMoneyPage}/>
