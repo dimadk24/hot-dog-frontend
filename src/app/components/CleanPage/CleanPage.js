@@ -135,6 +135,7 @@ class CleanPage extends Component {
             await this.setAccessToken(accessToken)
             return await this.onStartClean()
         } else {
+            this.props.onChangeBalance(this.props.balance - 50)
             const publics = this.setCleaningStateOnPublics()
             this.setGroups(publics)
             this.timerId = setInterval(async () => {

@@ -2,6 +2,8 @@ import React, {Component, Fragment} from 'react'
 import {BrowserRouter, Route, Switch} from 'react-router-dom'
 import CleanPage from './components/CleanPage/CleanPage'
 import * as Sentry from '@sentry/browser'
+import TopBar from './components/TopBar'
+import AddMoneyPage from './components/AddMoneyPage/AddMoneyPage'
 
 if (process.env.NODE_ENV === 'production') {
     // noinspection JSUnresolvedVariable
@@ -11,9 +13,23 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 class App extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {}
+    }
+
+    setBalance(newBalance) {
+        this.setState({balance: newBalance})
+    }
+
     componentWillMount() {
         window.user_id = getQueryParam('viewer_id')
         window.auth_key = getQueryParam('auth_key')
+        this.setBalance(this.getUserBalance())
+    }
+
+    getUserBalance() {
+        return 100
     }
 
     componentDidCatch(error, errorInfo) {
@@ -30,10 +46,15 @@ class App extends Component {
         return (
             <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <Fragment>
-                    {/*<Navigation />*/}
+                    <TopBar balance={this.state.balance}/>
                     <Switch>
-                        <Route path="/" component={CleanPage} />
-                        <Route path="/clean" component={CleanPage} />
+                        <Route exact path="/" render={
+                            (props) =>
+                                <CleanPage balance={this.state.balance}
+                                           onChangeBalance={(balance) => this.setBalance(balance)}/>
+                        }/>
+                        <Route path="/clean" component={CleanPage}/>
+                        <Route path={"/add_money"} component={AddMoneyPage}/>
                     </Switch>
                 </Fragment>
             </BrowserRouter>
@@ -43,6 +64,7 @@ class App extends Component {
 
 function getQueryParam(param) {
     const query = window.location.search.substring(1)
+    window.urlParams = query
     const vars = query.split('&')
     for (let i = 0; i < vars.length; i++) {
         const pair = vars[i].split('=')
