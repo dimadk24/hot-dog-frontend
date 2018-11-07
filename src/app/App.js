@@ -4,6 +4,7 @@ import CleanPage from './components/CleanPage/CleanPage'
 import * as Sentry from '@sentry/browser'
 import TopBar from './components/TopBar'
 import AddMoneyPage from './components/AddMoneyPage/AddMoneyPage'
+import axios from 'axios'
 
 if (process.env.NODE_ENV === 'production') {
     // noinspection JSUnresolvedVariable
@@ -22,14 +23,19 @@ class App extends Component {
         this.setState({balance: newBalance})
     }
 
-    componentWillMount() {
+    async componentWillMount() {
         window.user_id = getQueryParam('viewer_id')
         window.auth_key = getQueryParam('auth_key')
-        this.setBalance(this.getUserBalance())
+        this.setBalance(await this.getUserBalance())
     }
 
-    getUserBalance() {
-        return 100
+    async getUserBalance() {
+        return (await axios.get('https://hot-dog.site/api/getBalance', {
+            params: {
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
+            }
+        })).data.balance
     }
 
     componentDidCatch(error, errorInfo) {
