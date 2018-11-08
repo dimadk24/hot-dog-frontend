@@ -2,6 +2,16 @@ import React from 'react'
 import './AddMoneyPage.css'
 
 class AddMoneyPage extends React.Component {
+    componentWillMount() {
+        this.timerId = window.setInterval(() => {
+            this.props.updateBalance()
+        }, 1000)
+    }
+
+    componentWillUnmount() {
+        window.clearInterval(this.timerId);
+    }
+
     render() {
         return (
             <div className="add-money-page">

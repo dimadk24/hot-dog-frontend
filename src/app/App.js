@@ -56,15 +56,28 @@ class App extends Component {
         return (
             <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <Fragment>
-                    <TopBar balance={this.state.balance}/>
+                    <TopBar balance={this.state.balance} />
                     <Switch>
-                        <Route exact path="/" render={
-                            (props) =>
-                                <CleanPage balance={this.state.balance}
-                                           updateBalance={async () => await this.updateBalance()}/>
-                        }/>
-                        <Route path="/clean" component={CleanPage}/>
-                        <Route path={"/add_money"} component={AddMoneyPage}/>
+                        <Route
+                            exact
+                            path="/"
+                            render={() => (
+                                <CleanPage
+                                    balance={this.state.balance}
+                                    updateBalance={this.updateBalance.bind(this)}
+                                />
+                            )}
+                        />
+                        <Route path="/clean" component={CleanPage} />
+                        <Route
+                            path={'/add_money'}
+                            render={() => (
+                                <AddMoneyPage
+                                    updateBalance={this.updateBalance.bind(this)
+                                    }
+                                />
+                            )}
+                        />
                     </Switch>
                 </Fragment>
             </BrowserRouter>
