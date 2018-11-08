@@ -16,7 +16,7 @@ class AddMoneyPage extends React.Component {
                     <input
                         type="hidden"
                         name="receiver"
-                        value="410011706416685"
+                        value="410011043655449"
                     />
                     <input type="hidden" name="quickpay-form" value="shop" />
                     <input type="hidden" name="targets" value="Hot Dog" />
