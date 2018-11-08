@@ -14,6 +14,7 @@ import {
 import ReactDOM from 'react-dom'
 import {InputModal} from './InputModal'
 import {VideoGuide} from './VideoGuide'
+import {Redirect} from 'react-router-dom'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
@@ -130,10 +131,14 @@ class CleanPage extends Component {
     async onStartClean() {
         const public_ids = this.getPublicIds()
         const response = await this.startCleanTasks(public_ids)
-        if ('error' in response && response.error.id === 1) {
-            const accessToken = await this.getAccessTokenFromUser()
-            await this.setAccessToken(accessToken)
-            return await this.onStartClean()
+        if ('error' in response) {
+            if (response.error.id === 1) {
+                const accessToken = await this.getAccessTokenFromUser()
+                await this.setAccessToken(accessToken)
+                return await this.onStartClean()
+            } else if (response.error.id === 2) {
+                await this.showNotEnoughMoneyModal(response.error.value)
+            }
         } else {
             const publics = this.setCleaningStateOnPublics()
             this.setGroups(publics)
@@ -303,6 +308,7 @@ class CleanPage extends Component {
                 <AddPublicButton onClick={() => this.showModal()} />
                 <VideoGuide />
                 {/*{showGroupsModal && <Modal/>}*/}
+                {this.state.redirectToMoney && <Redirect to={"/add_money"} push />}
             </div>
         )
     }
@@ -340,6 +346,16 @@ class CleanPage extends Component {
 
     getPublicById(publics, public_id) {
         return publics.find((item) => item.id === public_id)
+    }
+
+    async showNotEnoughMoneyModal(money) {
+        const response = await swal({
+            title: 'Упс.. Недостаточно денег',
+            icon: 'error',
+            text: `Для очистки сообществ нужно еще ${money}р.\nПополните, пожалуйста, баланс`,
+            button: {text: 'Пополнить'}
+        })
+        if (response) this.setState({redirectToMoney: true})
     }
 }
 
