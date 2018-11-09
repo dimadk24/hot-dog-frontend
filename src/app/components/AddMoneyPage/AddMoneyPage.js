@@ -43,6 +43,7 @@ class AddMoneyPage extends React.Component {
                             className="money-input"
                             autoComplete="false"
                         />
+                        <p>Комиссия — 0%</p>
                     </div>
                     <div className="payment-type-wrapper">
                         <p>Способ оплаты:</p>

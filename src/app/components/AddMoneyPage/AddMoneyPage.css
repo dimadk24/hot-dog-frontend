@@ -20,6 +20,7 @@
 }
 
 .money-input {
+    margin-bottom: 5px;
     padding: 5px 7px;
     border-radius: 7px;
     border: 1px solid black;
