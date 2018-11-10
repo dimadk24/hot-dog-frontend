@@ -18,3 +18,9 @@
     max-width: 31.5rem;
   }
 }
+
+@media (max-width: 450px) {
+  .clean iframe {
+    width: 100%;
+  }
+}

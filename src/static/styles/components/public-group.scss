@@ -8,8 +8,6 @@
     .public {
         width: 100%;
 
-        cursor: pointer;
-
         background: white;
 
         padding: 1rem 3rem;
@@ -21,9 +19,6 @@
         box-shadow: 1px 2px 4px rgba(#000, 0.1);
 
         transition: background 0.25s;
-        &:hover {
-            background: rgba(#000, 0.001);
-        }
         &__heading {
             display: flex;
             justify-content: space-between;

@@ -1,3 +1,23 @@
 .public__heading__name {
     max-width: 80%;
 }
+
+.public .header-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    height: 5rem;
+
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+
+    font-size: 1.6rem;
+    margin: 0 10px;
+    padding: 0 0.5rem;
+
+    cursor: pointer;
+
+    transition: background 0.25s;
+}

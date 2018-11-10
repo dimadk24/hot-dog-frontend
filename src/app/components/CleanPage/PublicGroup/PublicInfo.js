@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import {FaUsers} from 'react-icons/fa'
+import {FaBroom, FaUsers} from 'react-icons/fa'
 import * as PropTypes from 'prop-types'
+import HeaderControl from '../PanelControl/HeaderControl'
 
 export class PublicInfo extends Component {
     render() {
@@ -8,6 +9,14 @@ export class PublicInfo extends Component {
             <div className="public__info__container public__info--all">
                 <FaUsers/>
                 {this.props.peopleCount}
+            </div>
+            <div className="public__info__container">
+                <HeaderControl
+                    text="Очистить"
+                    onClick={() => this.props.onStartClean()}
+                >
+                    <FaBroom />
+                </HeaderControl>
             </div>
             <div className="public__info__container public__info--deleted">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"

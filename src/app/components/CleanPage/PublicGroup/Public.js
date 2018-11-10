@@ -17,7 +17,8 @@ class Public extends Component {
             isCleaning: PropTypes.bool.isRequired,
             progress: PropTypes.number,
             status: PropTypes.string
-        }).isRequired
+        }).isRequired,
+        onClean: PropTypes.func.isRequired
     }
 
     render() {
@@ -40,6 +41,7 @@ class Public extends Component {
                             <PublicInfo
                                 peopleCount={this.props.followers}
                                 deletedPeople={this.props.dogs}
+                                onStartClean={() => this.props.onClean(this.props.id)}
                             />
                         )}
                     </div>

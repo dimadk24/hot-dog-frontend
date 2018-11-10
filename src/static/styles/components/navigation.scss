@@ -21,3 +21,9 @@
         }
     }
 }
+
+@media screen and (max-width: 450px) {
+  .nav {
+    padding: 0 10px;
+  }
+}

@@ -33,6 +33,11 @@ body {
   margin-right: 4rem;
 }
 
+@media screen and (max-width: 450px) {
+  .nav {
+    padding: 0 10px;
+  }
+}
 .intro {
   width: 100%;
   max-width: 40rem;
@@ -74,7 +79,6 @@ body {
   border: 1px solid #ced4da;
   border-radius: 6px;
   font-size: 1.6rem;
-  text-transform: capitalize;
   padding: 0 1rem;
   cursor: pointer;
   transition: background 0.25s;
@@ -91,16 +95,12 @@ body {
 }
 .public-wrapper .public {
   width: 100%;
-  cursor: pointer;
   background: white;
   padding: 1rem 3rem;
   color: #495057;
   border-radius: 2px;
   box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
   transition: background 0.25s;
-}
-.public-wrapper .public:hover {
-  background: rgba(0, 0, 0, 0.001);
 }
 .public-wrapper .public__heading {
   display: flex;
@@ -195,9 +195,9 @@ body {
   max-width: 31.5rem;
 }
 
-@media screen and (max-width: 400px) {
-  .nav {
-    padding: 0 10px;
+@media (max-width: 450px) {
+  .clean iframe {
+    width: 100%;
   }
 }
 

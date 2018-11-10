@@ -96,6 +96,9 @@ class CleanPage extends Component {
         newPublic.cleanData = {
             isCleaning: false
         }
+        newPublic.onClean = async () => {
+            await this.startCleanPublicById(newPublic.id)
+        }
         console.log(newPublic)
         this.setState((prevState) => {
             console.log(prevState)
@@ -112,6 +115,27 @@ class CleanPage extends Component {
             alreadyAddedPublic.dogs = dogs
             return {publics: prevState.publics}
         })
+    }
+
+    async startCleanPublicById(publicId) {
+        const response = await this.startCleanTasks([publicId])
+        if ('error' in response) {
+            if (response.error.id === 1) {
+                const accessToken = await this.getAccessTokenFromUser()
+                await this.setAccessToken(accessToken)
+                return await this.onStartClean()
+            } else if (response.error.id === 2) {
+                await this.showNotEnoughMoneyModal(response.error.value)
+            }
+        } else {
+            const publics = this.setCleaningStateOnPublicById(publicId)
+            this.setGroups(publics)
+            this.timerId = setInterval(async () => {
+                await this.updateCleanTasks()
+                console.log(this)
+                await this.props.updateBalance()
+            }, 1500)
+        }
     }
 
     async convertPublicLinkToId(link) {
@@ -158,6 +182,17 @@ class CleanPage extends Component {
             }
             return item
         })
+    }
+
+    setCleaningStateOnPublicById(publicId) {
+        const publics = this.state.publics.slice()
+        const publicIndex = publics.findIndex((item) => item.id === publicId)
+        publics[publicIndex].cleanData = {
+            isCleaning: true,
+            progress: 0,
+            status: 'Отправляем запрос'
+        }
+        return publics
     }
 
     async startCleanTasks(public_ids) {
@@ -251,6 +286,9 @@ class CleanPage extends Component {
     addCleanTaskToGroups(publics, cleanTasks) {
         if (cleanTasks && cleanTasks.length) {
             for (const publik of publics) {
+                publik.onClean = async () => {
+                    await this.startCleanPublicById(publik.id)
+                }
                 for (const cleanTask of cleanTasks) {
                     // noinspection JSUnresolvedVariable
                     if (publik.id === cleanTask.public_id)
@@ -270,6 +308,9 @@ class CleanPage extends Component {
         }
         return publics.map((publik) => {
             publik.cleanData = {isCleaning: false}
+            publik.onClean = async () => {
+                await this.startCleanPublicById(publik.id)
+            }
             return publik
         })
     }
@@ -287,7 +328,9 @@ class CleanPage extends Component {
         const cleanTasks = await this.getCleanTasks()
         if (!(cleanTasks && cleanTasks.length)) {
             clearInterval(this.timerId)
-            await this.refreshPublics()
+            for (const publik of this.state.publics) {
+                await this.refreshPublicById(publik.id)
+            }
             return
         }
         const publics = this.addCleanTaskToGroups(
@@ -308,21 +351,27 @@ class CleanPage extends Component {
                 <AddPublicButton onClick={() => this.showModal()} />
                 <VideoGuide />
                 {/*{showGroupsModal && <Modal/>}*/}
-                {this.state.redirectToMoney && <Redirect to={"/add_money"} push />}
+                {this.state.redirectToMoney && (
+                    <Redirect to={'/add_money'} push />
+                )}
             </div>
         )
     }
 
-    async refreshPublics() {
-        let freshPublics = []
-        for (const publik of this.state.publics) {
-            const freshPublic = await this.getFreshPublic(publik.id)
-            freshPublic.cleanData = {
-                isCleaning: false
-            }
-            freshPublics.push(freshPublic)
+    async refreshPublicById(publicId) {
+        const freshPublic = await this.getFreshPublic(publicId)
+        freshPublic.cleanData = {
+            isCleaning: false
         }
-        this.setGroups(freshPublics)
+        freshPublic.onClean = async () => {
+            await this.startCleanPublicById(freshPublic.id)
+        }
+        const {publics} = this.state
+        const freshPublicIndex = publics.findIndex(
+            (item) => item.id === publicId
+        )
+        publics[freshPublicIndex] = freshPublic
+        this.setGroups(publics)
     }
 
     async getFreshPublic(public_id) {
