@@ -13,6 +13,7 @@ class TopBar extends Component {
                     <NavLink className="nav__item" to="/clean">
                         Очистка
                     </NavLink>
+                    <NavLink className={"nav__item"} to={"/feedback"}>Отзывы</NavLink>
                     <NavLink className={"nav__item"} to={"/add_money"}>Пополнить баланс</NavLink>
                 </nav>
                 <div>

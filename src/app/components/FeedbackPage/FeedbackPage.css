@@ -1,0 +1,11 @@
+.vk-comments {
+    margin: 0 auto;
+    max-width: 80%;
+    padding: 15px;
+}
+
+@media screen and (max-width: 550px) {
+    .vk-comments {
+        max-width: 95%;
+    }
+}

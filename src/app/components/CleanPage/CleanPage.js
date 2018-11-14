@@ -39,8 +39,6 @@ class CleanPage extends Component {
             }, 1500)
         groups = this.addCleanTaskToGroups(groups, cleanTasks)
         this.setGroups(groups)
-        // noinspection JSUnresolvedVariable, JSUnresolvedFunction
-        VK.Widgets.Comments('vk_comments', {limit: 10, attach: '*'})
     }
 
     renderGroups = (groups) => {
@@ -353,7 +351,6 @@ class CleanPage extends Component {
                 {publics && this.renderGroups(publics)}
                 <AddPublicButton onClick={() => this.showModal()} />
                 <VideoGuide />
-                <div id="vk_comments" className="vk-comments" />
                 {/*{showGroupsModal && <Modal/>}*/}
                 {this.state.redirectToMoney && (
                     <Redirect to={'/add_money'} push />

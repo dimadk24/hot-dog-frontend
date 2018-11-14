@@ -22,8 +22,22 @@
     }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 550px) {
   .nav {
     padding: 0 10px;
+  }
+
+  nav > .nav__item:not(:last-child) {
+    margin-right: 15px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .nav {
+    padding: 3px;
+  }
+
+  nav > .nav__item:not(:last-child) {
+    margin-right: 2px;
   }
 }

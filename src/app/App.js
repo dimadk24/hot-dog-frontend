@@ -5,6 +5,7 @@ import * as Sentry from '@sentry/browser'
 import TopBar from './components/TopBar'
 import AddMoneyPage from './components/AddMoneyPage/AddMoneyPage'
 import axios from 'axios'
+import FeedbackPage from './components/FeedbackPage/FeedbackPage'
 
 if (process.env.NODE_ENV === 'production') {
     // noinspection JSUnresolvedVariable
@@ -78,6 +79,7 @@ class App extends Component {
                                 />
                             )}
                         />
+                        <Route path={'/feedback'} component={FeedbackPage} />
                     </Switch>
                 </Fragment>
             </BrowserRouter>
