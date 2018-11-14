@@ -20,7 +20,8 @@ const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'
 
 class CleanPage extends Component {
     state = {
-        publics: []
+        publics: [],
+        redirect: false
     }
 
     async componentWillMount() {
@@ -331,7 +332,7 @@ class CleanPage extends Component {
             for (const publik of this.state.publics) {
                 await this.refreshPublicById(publik.id)
             }
-            this.showCommentAlert()
+            await this.showCommentAlert()
             return
         }
         const publics = this.addCleanTaskToGroups(
@@ -352,8 +353,8 @@ class CleanPage extends Component {
                 <AddPublicButton onClick={() => this.showModal()} />
                 <VideoGuide />
                 {/*{showGroupsModal && <Modal/>}*/}
-                {this.state.redirectToMoney && (
-                    <Redirect to={'/add_money'} push />
+                {this.state.redirect && (
+                    <Redirect to={this.state.redirect} push />
                 )}
             </div>
         )
@@ -405,16 +406,17 @@ class CleanPage extends Component {
             text: `Для очистки сообществ нужно еще ${money}р.\nПополните, пожалуйста, баланс`,
             button: {text: 'Пополнить'}
         })
-        if (response) this.setState({redirectToMoney: true})
+        if (response) this.setState({redirect: '/add_money'})
     }
 
-    showCommentAlert() {
-        // noinspection JSIgnoredPromiseFromCall
-        swal({
+    async showCommentAlert() {
+        const response = await swal({
             title: 'Спасибо!',
             icon: 'success',
-            text: 'Оставьте, пожалуйста, отзыв о сервисе в форме ниже :)'
+            text: 'Оставьте, пожалуйста, отзыв о сервисе :)',
+            button: 'Хорошо'
         })
+        if (response) this.setState({redirect: '/feedback'})
     }
 }
 
