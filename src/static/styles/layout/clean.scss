@@ -25,6 +25,24 @@
   overflow-y: auto;
 }
 
+.publics::-webkit-scrollbar {
+  width: 10px;
+  -webkit-border-radius: 100px;
+  background-color: rgba(0, 0, 0, 0.09);
+}
+
+.publics::-webkit-scrollbar-thumb:vertical {
+  background: rgba(0,0,0,0.5);
+  -webkit-border-radius: 100px;
+  background-clip: padding-box;
+  border: 2px solid rgba(0, 0, 0, 0);
+  min-height: 10px;
+}
+.publics::-webkit-scrollbar-thumb:vertical:active {
+  background: rgba(0,0,0,0.61);
+}
+
+
 @media (max-width: 760px) {
   .publics {
     max-height: unset;
