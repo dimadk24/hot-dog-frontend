@@ -349,7 +349,9 @@ class CleanPage extends Component {
         return (
             <div className="clean">
                 <PanelControl onCleanClick={() => this.onStartClean()} />
-                {publics && this.renderGroups(publics)}
+                <div className="publics">
+                    {publics && this.renderGroups(publics)}
+                </div>
                 <AddPublicButton onClick={() => this.showModal()} />
                 <VideoGuide />
                 {/*{showGroupsModal && <Modal/>}*/}

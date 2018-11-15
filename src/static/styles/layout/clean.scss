@@ -19,6 +19,18 @@
   }
 }
 
+.publics {
+  max-height: 490px;
+  margin-top: 3rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 760px) {
+  .publics {
+    max-height: unset;
+  }
+}
+
 @media (max-width: 450px) {
   .clean iframe {
     width: 100%;
