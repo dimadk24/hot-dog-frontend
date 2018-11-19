@@ -82,7 +82,7 @@ class CleanPage extends Component {
         })).data
     }
 
-    async showModal() {
+    showModal = async () => {
         const addingPublicLink = await swal({
             text: 'Введите ссылку на сообщество:',
             content: 'input',
@@ -412,6 +412,7 @@ class CleanPage extends Component {
     }
     render() {
         const {publics, isAddGroupOpen} = this.state
+        const {groups} = this.props;
 
         return (
             <div className="clean">
@@ -423,10 +424,10 @@ class CleanPage extends Component {
 
                 <AddPublicButton onClick={this.openModal} />
 
-                {isAddGroupOpen && <GroupsModal />}
+                {isAddGroupOpen && <GroupsModal groups={groups}/>}
 
                 <VideoGuide />
-                {/*{showGroupsModal && <Modal/>}*/}
+
                 {this.state.redirect && (
                     <Redirect to={this.state.redirect} push />
                 )}
