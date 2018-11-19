@@ -99,6 +99,7 @@ export const GetUserGroups = () => {
         startLoading(LOAD_GROUPS, dispatch)
         const groups = API.getUserGroups()
         groups.then((res) => {
+            console.log('GET USER GROUPS!!!', res)
             dispatch({type: GET_USER_GROUPS.Loaded, payload: res})
         })
         stopLoading(LOAD_GROUPS, dispatch)

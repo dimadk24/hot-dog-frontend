@@ -18,10 +18,13 @@ import {Redirect} from 'react-router-dom'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
+console.log("DIMA START DEVELOPING");
+
 class CleanPage extends Component {
     state = {
         publics: [],
-        redirect: false
+        redirect: false,
+        isAddGroupOpen: false
     }
 
     async componentWillMount() {
@@ -344,24 +347,6 @@ class CleanPage extends Component {
 
     showFinishedAlert(publik) {}
 
-    render() {
-        const {publics} = this.state
-        return (
-            <div className="clean">
-                <PanelControl onCleanClick={() => this.onStartClean()} />
-                <div className="publics">
-                    {publics && this.renderGroups(publics)}
-                </div>
-                <AddPublicButton onClick={() => this.showModal()} />
-                <VideoGuide />
-                {/*{showGroupsModal && <Modal/>}*/}
-                {this.state.redirect && (
-                    <Redirect to={this.state.redirect} push />
-                )}
-            </div>
-        )
-    }
-
     async refreshPublicById(publicId) {
         const freshPublic = await this.getFreshPublic(publicId)
         freshPublic.cleanData = {
@@ -419,6 +404,24 @@ class CleanPage extends Component {
             button: 'Хорошо'
         })
         if (response) this.setState({redirect: '/feedback'})
+    }
+
+    render() {
+        const {publics} = this.state
+        return (
+            <div className="clean">
+                <PanelControl onCleanClick={() => this.onStartClean()} />
+                <div className="publics">
+                    {publics && this.renderGroups(publics)}
+                </div>
+                <AddPublicButton onClick={() => this.showModal()} />
+                <VideoGuide />
+                {/*{showGroupsModal && <Modal/>}*/}
+                {this.state.redirect && (
+                    <Redirect to={this.state.redirect} push />
+                )}
+            </div>
+        )
     }
 }
 
