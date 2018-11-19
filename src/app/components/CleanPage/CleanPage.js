@@ -15,10 +15,9 @@ import ReactDOM from 'react-dom'
 import {InputModal} from './InputModal'
 import {VideoGuide} from './VideoGuide'
 import {Redirect} from 'react-router-dom'
+import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
-
-console.log("DIMA START DEVELOPING");
 
 class CleanPage extends Component {
     state = {
@@ -406,15 +405,26 @@ class CleanPage extends Component {
         if (response) this.setState({redirect: '/feedback'})
     }
 
+    openModal = () => {
+        this.setState({
+            isAddGroupOpen: !this.state.isAddGroupOpen
+        })
+    }
     render() {
-        const {publics} = this.state
+        const {publics, isAddGroupOpen} = this.state
+
         return (
             <div className="clean">
                 <PanelControl onCleanClick={() => this.onStartClean()} />
+
                 <div className="publics">
                     {publics && this.renderGroups(publics)}
                 </div>
-                <AddPublicButton onClick={() => this.showModal()} />
+
+                <AddPublicButton onClick={this.openModal} />
+
+                {isAddGroupOpen && <GroupsModal />}
+
                 <VideoGuide />
                 {/*{showGroupsModal && <Modal/>}*/}
                 {this.state.redirect && (
