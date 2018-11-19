@@ -405,9 +405,7 @@ class CleanPage extends Component {
         if (response) this.setState({redirect: '/feedback'})
     }
 
-    toggleModal = (e) => {
-        e.stopPropagation()
-        console.log("stop propagination");
+    toggleModal = () => {
         this.setState({
             isAddGroupOpen: !this.state.isAddGroupOpen
         })
@@ -439,7 +437,7 @@ class CleanPage extends Component {
 }
 
 const mapStateToProps = ({clean}) => ({
-    groups: clean.groups,
+    groups: clean.groups.data,
     hotDogsGroups: clean.hotDogsGroups,
     cleanTasks: clean.cleanTasks
 })

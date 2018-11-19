@@ -6,7 +6,8 @@ class GroupsModal extends Component {
     render() {
         const {groups, close} = this.props
         return (
-            <div className="modal" onClick={close}>
+            <div className="modal">
+                <div className="modal__bg" onClick={close}/>
                 <div className="modal__body">
                     <div className="modal__body__text">Выберите сообщество</div>
                     <div className="modal__body__content">

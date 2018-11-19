@@ -15,7 +15,7 @@ export const LOAD_CLEAN_TASKS = {
     Loaded: 'tasks/CLEAN_TASKS_LOADED',
     Errors: 'tasks/CLEAN_TASKS_ERRORS'
 }
-export const ADD_GROUP_TO_QUE = 'ADD_GROUP_TO_QUE'
+export const TOGGLE_IS_GROUP_FOR_CLEAN = 'ADD_GROUP_TO_QUE'
 
 const initialState = {
     groups: {
@@ -48,10 +48,16 @@ export default (state = initialState, action) => {
         }
         case GET_USER_GROUPS.Loaded: {
             const groups = action.payload
-            console.log('PUT IN STATE', groups)
+            groups.forEach((group) => {
+                group.isInCleanQue = false;
+                group.isLoadingInfo = true
+            })
             return {
                 ...state,
-                groups
+                groups: {
+                    data: groups,
+                    loading: false
+                }
             }
         }
         case LOAD_GROUPS.Load: {
@@ -90,6 +96,27 @@ export default (state = initialState, action) => {
                 }
             }
         }
+        case TOGGLE_IS_GROUP_FOR_CLEAN:
+            const groupID = action.payload
+            console.log('TOGGLE GROUP:', groupID)
+            let g = state.groups.data.map((group) => {
+                if (group.id === groupID) {
+                    return {
+                        ...group,
+                        isInCleanQue: !group.isInCleanQue
+                    }
+                } else {
+                    return group
+                }
+            })
+            console.log(g)
+            return {
+                ...state,
+                groups: {
+                    ...state.groups,
+                    data: g
+                }
+            }
         default:
             return state
     }
@@ -133,11 +160,11 @@ export const LoadCleanTasks = () => {
     }
 }
 
-export const AddGroupToCleanQue = (group) => {
+export const SetGroupForCleaning = (groupID) => {
     return (dispatch) => {
         dispatch({
-            type: ADD_GROUP_TO_QUE,
-            payload: group
+            type: TOGGLE_IS_GROUP_FOR_CLEAN,
+            payload: groupID
         })
     }
 }
