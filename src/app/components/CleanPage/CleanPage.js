@@ -405,7 +405,9 @@ class CleanPage extends Component {
         if (response) this.setState({redirect: '/feedback'})
     }
 
-    openModal = () => {
+    toggleModal = (e) => {
+        e.stopPropagation()
+        console.log("stop propagination");
         this.setState({
             isAddGroupOpen: !this.state.isAddGroupOpen
         })
@@ -422,9 +424,9 @@ class CleanPage extends Component {
                     {publics && this.renderGroups(publics)}
                 </div>
 
-                <AddPublicButton onClick={this.openModal} />
+                <AddPublicButton onClick={this.toggleModal} />
 
-                {isAddGroupOpen && <GroupsModal groups={groups}/>}
+                {isAddGroupOpen && <GroupsModal close={this.toggleModal} groups={groups}/>}
 
                 <VideoGuide />
 

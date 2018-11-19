@@ -1,27 +1,17 @@
 import React, {Component} from 'react'
 import './modal.scss'
+import Group from './Group'
 
 class GroupsModal extends Component {
     render() {
-        const {groups} = this.props
+        const {groups, close} = this.props
         return (
-            <div className="modal">
+            <div className="modal" onClick={close}>
                 <div className="modal__body">
                     <div className="modal__body__text">Выберите сообщество</div>
                     <div className="modal__body__content">
                         {groups.map((group) => {
-                            return (
-                                <div className="group">
-                                    <div className="group__details">
-                                        <img
-                                            src={group.avatar_url}
-                                            alt="avatar"
-                                        />
-                                        {group.name}
-                                    </div>
-                                    <span className="plus-sign" />
-                                </div>
-                            )
+                            return <Group group={group} />
                         })}
                     </div>
                 </div>

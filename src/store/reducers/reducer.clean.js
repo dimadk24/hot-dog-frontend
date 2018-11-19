@@ -15,6 +15,7 @@ export const LOAD_CLEAN_TASKS = {
     Loaded: 'tasks/CLEAN_TASKS_LOADED',
     Errors: 'tasks/CLEAN_TASKS_ERRORS'
 }
+export const ADD_GROUP_TO_QUE = 'ADD_GROUP_TO_QUE'
 
 const initialState = {
     groups: {
@@ -128,6 +129,15 @@ export const LoadCleanTasks = () => {
             const cleanTasksData = response.data
             dispatch({type: LOAD_CLEAN_TASKS.Loaded, payload: cleanTasksData})
             stopLoading(LOAD_CLEAN_TASKS, dispatch)
+        })
+    }
+}
+
+export const AddGroupToCleanQue = (group) => {
+    return (dispatch) => {
+        dispatch({
+            type: ADD_GROUP_TO_QUE,
+            payload: group
         })
     }
 }
