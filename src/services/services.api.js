@@ -6,13 +6,6 @@ const API_URL = 'https://hot-dog.site/api'
 
 export const API = {
     getUserGroups: () => getGroupsPromise,
-    loadCleanTasks: () =>
-        axios.get(API_URL + '/getCleanTasks', {
-            params: {
-                user_vk_id: window.user_id,
-                auth_key: window.auth_key
-            }
-        }),
     getGroupsForClean: () =>
         axios.get(API_URL + '/getPublics', {
             params: {

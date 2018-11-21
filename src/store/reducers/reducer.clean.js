@@ -8,9 +8,9 @@ export const GET_USER_GROUPS = {
 export const TOGGLE_IS_GROUP_FOR_CLEAN = 'ADD_GROUP_TO_QUE'
 
 export const GET_GROUPS_FOR_CLEAN = {
-    Load: 'groups/GET_GROUPS_FOR_CLEAN',
-    Loaded: 'groups/GET_GROUPS_FOR_CLEAN',
-    Errors: 'groups/GET_GROUPS_FOR_CLEAN'
+    Load: 'groups/GET_GROUPS_FOR_CLEAN_LOAD',
+    Loaded: 'groups/GET_GROUPS_FOR_CLEAN_LOADED',
+    Errors: 'groups/GET_GROUPS_FOR_CLEAN_ERRORS'
 }
 
 const initialState = {
@@ -25,6 +25,7 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type) {
         case GET_USER_GROUPS.Load: {
+            console.log('Start Load User Groups')
             return {
                 ...state,
                 groups: {
@@ -34,15 +35,24 @@ export default (state = initialState, action) => {
             }
         }
         case GET_USER_GROUPS.Loaded: {
-            const groups = action.payload
-            groups.forEach((group) => {
+            const userGroups = action.payload
+            const groupsSetted = state.groups.data
+            userGroups.forEach((group) => {
                 group.inCleanQue = false
                 group.isLoadingInfo = true
             })
+            userGroups.forEach(userGroup => {
+                groupsSetted.map(settedGroup => {
+                    if (userGroup.id === settedGroup.vk_id) {
+                        userGroup.inCleanQue = settedGroup.inCleanQue
+                    }
+                })
+            })
+            console.log('End Load User Groups', userGroups)
             return {
                 ...state,
                 groups: {
-                    data: groups,
+                    data: userGroups,
                     loadingUserGroups: false
                 }
             }
@@ -59,6 +69,7 @@ export default (state = initialState, action) => {
                     return group
                 }
             })
+            console.log('TOGGLE GROUP')
             return {
                 ...state,
                 groups: {
@@ -67,6 +78,7 @@ export default (state = initialState, action) => {
                 }
             }
         case GET_GROUPS_FOR_CLEAN.Load: {
+            console.log('Start Load clean tasks')
             return {
                 ...state,
                 groups: {
@@ -77,11 +89,16 @@ export default (state = initialState, action) => {
         }
         case GET_GROUPS_FOR_CLEAN.Loaded: {
             const groupsForClean = action.payload
-            console.log('SET GROUPS FOR CLEAN:', groupsForClean)
+            groupsForClean.forEach((group) => {
+                group.inCleanQue = true
+                group.isLoadingInfo = false
+            })
+            console.log('Stop Loading clean tasks', groupsForClean)
             return {
                 ...state,
                 groups: {
                     ...state.groups,
+                    data: groupsForClean,
                     loadingCleanTasks: false
                 }
             }
@@ -91,36 +108,29 @@ export default (state = initialState, action) => {
     }
 }
 
-export const GetUserGroups = () => {
-    return (dispatch) => {
-        startLoading(GET_USER_GROUPS, dispatch)
-        const groups = API.getUserGroups()
-        groups.then((res) => {
-            console.log('GET USER GROUPS!!!', res)
-            dispatch({type: GET_USER_GROUPS.Loaded, payload: res})
-        })
-    }
-}
-
-export const GetGroupsForClean = () => {
-    return (dispatch) => {
-        startLoading(GET_GROUPS_FOR_CLEAN)
-        API.getGroupsForClean().then(function fetchGroupsForClean(r) {
-            const groupsForClean = r.data
-            console.log('GET GROUPS FOR CLEAN:', groupsForClean)
-            dispatch({
-                type: GET_GROUPS_FOR_CLEAN.Loaded,
-                payload: groupsForClean
-            })
-        })
-    }
-}
-
 export const ToggleIsGroupForCleaning = (groupID) => {
     return (dispatch) => {
         dispatch({
             type: TOGGLE_IS_GROUP_FOR_CLEAN,
             payload: groupID
+        })
+    }
+}
+
+export const GetGroupsForCleanAndUserGroups = () => {
+    return (dispatch) => {
+        startLoading(GET_GROUPS_FOR_CLEAN, dispatch)
+        API.getGroupsForClean().then((r) => {
+            const groupsForClean = r.data
+            dispatch({
+                type: GET_GROUPS_FOR_CLEAN.Loaded,
+                payload: groupsForClean
+            })
+            startLoading(GET_USER_GROUPS, dispatch)
+            const groups = API.getUserGroups()
+            groups.then((res) => {
+                dispatch({type: GET_USER_GROUPS.Loaded, payload: res})
+            })
         })
     }
 }

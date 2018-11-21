@@ -27,7 +27,7 @@
         "easy-start": "react-scripts start",
         "deploy": "gh-pages -d build",
         "predeploy": "npm run build",
-        "start": "concurrently \"react-scripts start\" \"sass --watch ./src/static/styles/index.scss:./src/static/styles/app.css\"  ",
+        "start": "yarn deploy",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"

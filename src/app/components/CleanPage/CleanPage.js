@@ -6,10 +6,7 @@ import {bindActionCreators} from 'redux'
 import {AddPublicButton} from './PublicGroup/AddPublicButton'
 import swal from 'sweetalert'
 import axios from 'axios'
-import {
-    GetUserGroups,
-    GetGroupsForClean
-} from '../../../store/reducers/reducer.clean'
+import {GetGroupsForCleanAndUserGroups} from '../../../store/reducers/reducer.clean'
 import ReactDOM from 'react-dom'
 import {InputModal} from './InputModal'
 import {VideoGuide} from './VideoGuide'
@@ -17,6 +14,8 @@ import {Redirect} from 'react-router-dom'
 import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
+
+console.log('logger')
 
 class CleanPage extends Component {
     state = {
@@ -26,14 +25,13 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
-        const {GetUserGroups, GetGroupsForClean} = this.props
-        GetGroupsForClean()
-        GetUserGroups()
+        const {GetGroupsForCleanAndUserGroups} = this.props
+        GetGroupsForCleanAndUserGroups()
 
         let groups = await this.loadGroups()
 
         const cleanTasks = await this.loadCleanTasks()
-        console.log('CLEAN TASKS:', cleanTasks)
+        // console.log('CLEAN TASKS:', cleanTasks)
 
         if (cleanTasks && cleanTasks.length)
             this.timerId = setInterval(async () => {
@@ -60,7 +58,7 @@ class CleanPage extends Component {
                 this.showFinishedAlert(group)
             }
         }
-        console.log('Setting groups:', groups)
+        // console.log('Setting groups:', groups)
         this.setState({publics: groups})
     }
 
@@ -444,7 +442,12 @@ const mapStateToProps = ({clean}) => ({
 })
 
 const mapDispatchToProps = (dispatch) =>
-    bindActionCreators({GetUserGroups, GetGroupsForClean}, dispatch)
+    bindActionCreators(
+        {
+            GetGroupsForCleanAndUserGroups
+        },
+        dispatch
+    )
 export default connect(
     mapStateToProps,
     mapDispatchToProps
