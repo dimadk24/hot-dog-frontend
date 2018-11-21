@@ -87,6 +87,10 @@
 
     &--cris {
         transform: rotate(45deg);
+        color: rgba(255, 50, 91, 0.8);
+        &:hover {
+            color: rgb(255, 50, 91);
+        }
     }
     transition: transform 0.15s ease-in-out, color 0.15s;
     &::before {

@@ -5,13 +5,30 @@ const VK = window.VK
 const API_URL = 'https://hot-dog.site/api'
 
 export const API = {
-    getUserGroups: () => {
-        return getGroupsPromise
-    },
-    loadGroups: () =>
-        axios.get(API_URL + '/getPublics', authHeaderDogsAPI()),
+    getUserGroups: () => getGroupsPromise,
     loadCleanTasks: () =>
-        axios.get(API_URL + '/getCleanTasks', authHeaderDogsAPI())
+        axios.get(API_URL + '/getCleanTasks', {
+            params: {
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
+            }
+        }),
+    getGroupsForClean: () =>
+        axios.get(API_URL + '/getPublics', {
+            params: {
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
+            }
+        }),
+    getGroupDogsCount: (groupID) =>
+        axios.get(API_URL + '/getDogsCount', {
+            params: {
+                id: groupID,
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
+            }
+        }),
+    getGroupUsersCount: (groupID) => axios.post(API_URL + '/addPublic')
 }
 
 const getGroupsPromise = new Promise((resolve, reject) => {

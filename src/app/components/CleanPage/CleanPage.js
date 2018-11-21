@@ -8,8 +8,8 @@ import swal from 'sweetalert'
 import axios from 'axios'
 import {
     GetUserGroups,
-    LoadGroups,
-    LoadCleanTasks
+    LoadCleanTasks,
+    GetGroupsForClean
 } from '../../../store/reducers/reducer.clean'
 import ReactDOM from 'react-dom'
 import {InputModal} from './InputModal'
@@ -27,14 +27,14 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
-        const {GetUserGroups, LoadGroups, LoadCleanTasks} = this.props
+        const {GetUserGroups, LoadCleanTasks, GetGroupsForClean} = this.props
+        GetGroupsForClean()
         GetUserGroups()
-        LoadGroups()
-        LoadCleanTasks()
 
         let groups = await this.loadGroups()
 
         const cleanTasks = await this.loadCleanTasks()
+        console.log('CLEAN TASKS:', cleanTasks)
 
         if (cleanTasks && cleanTasks.length)
             this.timerId = setInterval(async () => {
@@ -46,7 +46,7 @@ class CleanPage extends Component {
 
     renderGroups = (groups) => {
         if (!groups.length) return null
-        return groups.map((publik) => <Public {...publik} key={publik.id} />)
+        return groups.map((group) => <Public {...group} key={group.id} />)
     }
 
     componentWillUnmount() {
@@ -61,6 +61,7 @@ class CleanPage extends Component {
                 this.showFinishedAlert(group)
             }
         }
+        console.log('Setting groups:', groups)
         this.setState({publics: groups})
     }
 
@@ -412,7 +413,7 @@ class CleanPage extends Component {
     }
     render() {
         const {publics, isAddGroupOpen} = this.state
-        const {groups} = this.props;
+        const {groups} = this.props
 
         return (
             <div className="clean">
@@ -424,7 +425,9 @@ class CleanPage extends Component {
 
                 <AddPublicButton onClick={this.toggleModal} />
 
-                {isAddGroupOpen && <GroupsModal close={this.toggleModal} groups={groups}/>}
+                {isAddGroupOpen && (
+                    <GroupsModal close={this.toggleModal} groups={groups} />
+                )}
 
                 <VideoGuide />
 
@@ -438,12 +441,14 @@ class CleanPage extends Component {
 
 const mapStateToProps = ({clean}) => ({
     groups: clean.groups.data,
-    hotDogsGroups: clean.hotDogsGroups,
     cleanTasks: clean.cleanTasks
 })
 
 const mapDispatchToProps = (dispatch) =>
-    bindActionCreators({GetUserGroups, LoadGroups, LoadCleanTasks}, dispatch)
+    bindActionCreators(
+        {GetUserGroups, LoadCleanTasks, GetGroupsForClean},
+        dispatch
+    )
 export default connect(
     mapStateToProps,
     mapDispatchToProps

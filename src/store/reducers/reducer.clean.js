@@ -17,13 +17,14 @@ export const LOAD_CLEAN_TASKS = {
 }
 export const TOGGLE_IS_GROUP_FOR_CLEAN = 'ADD_GROUP_TO_QUE'
 
+export const GET_GROUPS_FOR_CLEAN = {
+    Load: 'groups/GET_GROUPS_FOR_CLEAN',
+    Loaded: 'groups/GET_GROUPS_FOR_CLEAN',
+    Errors: 'groups/GET_GROUPS_FOR_CLEAN'
+}
+
 const initialState = {
     groups: {
-        data: [],
-        loading: true,
-        errors: []
-    },
-    hotDogsGroups: {
         data: [],
         loading: true,
         errors: []
@@ -49,7 +50,7 @@ export default (state = initialState, action) => {
         case GET_USER_GROUPS.Loaded: {
             const groups = action.payload
             groups.forEach((group) => {
-                group.isInCleanQue = false;
+                group.isInCleanQue = false
                 group.isLoadingInfo = true
             })
             return {
@@ -87,6 +88,7 @@ export default (state = initialState, action) => {
         }
         case LOAD_CLEAN_TASKS.Loaded: {
             const cleanTasks = action.payload
+            console.log('Set clean tasks:', cleanTasks)
             return {
                 ...state,
                 cleanTasks: {
@@ -98,7 +100,6 @@ export default (state = initialState, action) => {
         }
         case TOGGLE_IS_GROUP_FOR_CLEAN:
             const groupID = action.payload
-            console.log('TOGGLE GROUP:', groupID)
             let g = state.groups.data.map((group) => {
                 if (group.id === groupID) {
                     return {
@@ -109,7 +110,6 @@ export default (state = initialState, action) => {
                     return group
                 }
             })
-            console.log(g)
             return {
                 ...state,
                 groups: {
@@ -117,6 +117,17 @@ export default (state = initialState, action) => {
                     data: g
                 }
             }
+        case GET_GROUPS_FOR_CLEAN: {
+            const groupsForClean = action.payload
+            console.log('SET GROUPS FOR CLEAN:', groupsForClean)
+            return {
+                ...state,
+                cleanTasks: {
+                    ...state.cleanTasks,
+                    data: groupsForClean
+                }
+            }
+        }
         default:
             return state
     }
@@ -134,33 +145,34 @@ export const GetUserGroups = () => {
     }
 }
 
-export const LoadGroups = () => {
-    return (dispatch) => {
-        startLoading(LOAD_GROUPS, dispatch)
-        API.loadGroups().then((response) => {
-            const groupsData = response.data
-            dispatch({
-                type: LOAD_GROUPS.Loaded,
-                payload: groupsData
-            })
-            stopLoading(LOAD_GROUPS, dispatch)
-        })
-    }
-}
-
 export const LoadCleanTasks = () => {
     return (dispatch) => {
         startLoading(LOAD_CLEAN_TASKS, dispatch)
-
-        API.loadCleanTasks().then((response) => {
-            const cleanTasksData = response.data
+        API.loadCleanTasks().then((r) => {
+            const cleanTasksData = r.data
+            console.log('LOAD CLEAN TASKS REDUCER', cleanTasksData)
             dispatch({type: LOAD_CLEAN_TASKS.Loaded, payload: cleanTasksData})
             stopLoading(LOAD_CLEAN_TASKS, dispatch)
         })
     }
 }
 
-export const SetGroupForCleaning = (groupID) => {
+export const GetGroupsForClean = () => {
+    return (dispatch) => {
+        startLoading(GET_GROUPS_FOR_CLEAN)
+        API.getGroupsForClean().then(function fetchGroupsForClean(r) {
+            const groupsForClean = r.data
+            console.log('GET GROUPS FOR CLEAN:', groupsForClean)
+            dispatch({
+                type: GET_GROUPS_FOR_CLEAN.Loaded,
+                payload: groupsForClean
+            })
+        })
+        stopLoading(GET_GROUPS_FOR_CLEAN)
+    }
+}
+
+export const ToggleIsGroupForCleaning = (groupID) => {
     return (dispatch) => {
         dispatch({
             type: TOGGLE_IS_GROUP_FOR_CLEAN,

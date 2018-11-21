@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {SetGroupForCleaning} from '../../../../../store/reducers/reducer.clean'
+import {ToggleIsGroupForCleaning} from '../../../../../store/reducers/reducer.clean'
 class Group extends Component {
     render() {
         const {group, SetGroupForCleaning} = this.props
@@ -28,7 +28,7 @@ const mapStateToProps = (state) => ({})
 const mapDispatchToProps = (dispatch) =>
     bindActionCreators(
         {
-            SetGroupForCleaning
+            SetGroupForCleaning: ToggleIsGroupForCleaning
         },
         dispatch
     )
