@@ -27,7 +27,7 @@ class CleanPage extends Component {
     }
 
     async componentWillMount() {
-        const {GetUserGroups, LoadCleanTasks, GetGroupsForClean} = this.props
+        const {GetUserGroups, GetGroupsForClean} = this.props
         GetGroupsForClean()
         GetUserGroups()
 

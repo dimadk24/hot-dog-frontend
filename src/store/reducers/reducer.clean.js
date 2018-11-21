@@ -5,16 +5,6 @@ export const GET_USER_GROUPS = {
     Loaded: 'groups/USER_GROUPS_LOADED',
     Errors: 'groups/USER_GROUPS_ERRORS'
 }
-export const LOAD_GROUPS = {
-    Load: 'groups/GROUPS_LOAD',
-    Loaded: 'groups/GROUPS_LOADED',
-    Errors: 'groups/GROUPS_ERRORS'
-}
-export const LOAD_CLEAN_TASKS = {
-    Load: 'tasks/LOAD_CLEAN_TASKS',
-    Loaded: 'tasks/CLEAN_TASKS_LOADED',
-    Errors: 'tasks/CLEAN_TASKS_ERRORS'
-}
 export const TOGGLE_IS_GROUP_FOR_CLEAN = 'ADD_GROUP_TO_QUE'
 
 export const GET_GROUPS_FOR_CLEAN = {
@@ -61,43 +51,6 @@ export default (state = initialState, action) => {
                 }
             }
         }
-        case LOAD_GROUPS.Load: {
-            return {
-                ...state,
-                hotDogsGroups: {
-                    ...state.hotDogsGroups,
-                    loading: true
-                }
-            }
-        }
-        case LOAD_GROUPS.Loaded: {
-            const hotDogsGroups = action.payload
-            return {
-                ...state,
-                hotDogsGroups
-            }
-        }
-        case LOAD_CLEAN_TASKS.Load: {
-            return {
-                ...state,
-                cleanTasks: {
-                    ...state.cleanTasks,
-                    loading: true
-                }
-            }
-        }
-        case LOAD_CLEAN_TASKS.Loaded: {
-            const cleanTasks = action.payload
-            console.log('Set clean tasks:', cleanTasks)
-            return {
-                ...state,
-                cleanTasks: {
-                    loading: false,
-                    data: cleanTasks,
-                    errors: []
-                }
-            }
-        }
         case TOGGLE_IS_GROUP_FOR_CLEAN:
             const groupID = action.payload
             let g = state.groups.data.map((group) => {
@@ -135,25 +88,13 @@ export default (state = initialState, action) => {
 
 export const GetUserGroups = () => {
     return (dispatch) => {
-        startLoading(LOAD_GROUPS, dispatch)
+        startLoading(GET_USER_GROUPS, dispatch)
         const groups = API.getUserGroups()
         groups.then((res) => {
             console.log('GET USER GROUPS!!!', res)
             dispatch({type: GET_USER_GROUPS.Loaded, payload: res})
         })
-        stopLoading(LOAD_GROUPS, dispatch)
-    }
-}
-
-export const LoadCleanTasks = () => {
-    return (dispatch) => {
-        startLoading(LOAD_CLEAN_TASKS, dispatch)
-        API.loadCleanTasks().then((r) => {
-            const cleanTasksData = r.data
-            console.log('LOAD CLEAN TASKS REDUCER', cleanTasksData)
-            dispatch({type: LOAD_CLEAN_TASKS.Loaded, payload: cleanTasksData})
-            stopLoading(LOAD_CLEAN_TASKS, dispatch)
-        })
+        stopLoading(GET_USER_GROUPS, dispatch)
     }
 }
 
