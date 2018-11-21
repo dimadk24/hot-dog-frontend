@@ -8,7 +8,6 @@ import swal from 'sweetalert'
 import axios from 'axios'
 import {
     GetUserGroups,
-    LoadCleanTasks,
     GetGroupsForClean
 } from '../../../store/reducers/reducer.clean'
 import ReactDOM from 'react-dom'
@@ -445,10 +444,7 @@ const mapStateToProps = ({clean}) => ({
 })
 
 const mapDispatchToProps = (dispatch) =>
-    bindActionCreators(
-        {GetUserGroups, LoadCleanTasks, GetGroupsForClean},
-        dispatch
-    )
+    bindActionCreators({GetUserGroups, GetGroupsForClean}, dispatch)
 export default connect(
     mapStateToProps,
     mapDispatchToProps

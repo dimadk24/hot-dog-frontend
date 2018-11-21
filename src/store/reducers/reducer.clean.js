@@ -16,12 +16,8 @@ export const GET_GROUPS_FOR_CLEAN = {
 const initialState = {
     groups: {
         data: [],
-        loading: true,
-        errors: []
-    },
-    cleanTasks: {
-        data: [],
-        loading: true,
+        loadingUserGroups: true,
+        loadingCleanTasks: true,
         errors: []
     }
 }
@@ -33,31 +29,31 @@ export default (state = initialState, action) => {
                 ...state,
                 groups: {
                     ...state.groups,
-                    loading: true
+                    loadingUserGroups: true
                 }
             }
         }
         case GET_USER_GROUPS.Loaded: {
             const groups = action.payload
             groups.forEach((group) => {
-                group.isInCleanQue = false
+                group.inCleanQue = false
                 group.isLoadingInfo = true
             })
             return {
                 ...state,
                 groups: {
                     data: groups,
-                    loading: false
+                    loadingUserGroups: false
                 }
             }
         }
         case TOGGLE_IS_GROUP_FOR_CLEAN:
             const groupID = action.payload
-            let g = state.groups.data.map((group) => {
+            let toggledGroups = state.groups.data.map((group) => {
                 if (group.id === groupID) {
                     return {
                         ...group,
-                        isInCleanQue: !group.isInCleanQue
+                        inCleanQue: !group.inCleanQue
                     }
                 } else {
                     return group
@@ -67,17 +63,26 @@ export default (state = initialState, action) => {
                 ...state,
                 groups: {
                     ...state.groups,
-                    data: g
+                    data: toggledGroups
                 }
             }
+        case GET_GROUPS_FOR_CLEAN.Load: {
+            return {
+                ...state,
+                groups: {
+                    ...state.groups,
+                    loadingCleanTasks: true
+                }
+            }
+        }
         case GET_GROUPS_FOR_CLEAN.Loaded: {
             const groupsForClean = action.payload
             console.log('SET GROUPS FOR CLEAN:', groupsForClean)
             return {
                 ...state,
-                cleanTasks: {
-                    ...state.cleanTasks,
-                    data: groupsForClean
+                groups: {
+                    ...state.groups,
+                    loadingCleanTasks: false
                 }
             }
         }

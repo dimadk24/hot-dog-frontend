@@ -13,7 +13,7 @@ class Group extends Component {
                 </div>
                 <span
                     className={`plus-sign ${
-                        group.isInCleanQue ? 'plus-sign--cris' : ''
+                        group.inCleanQue ? 'plus-sign--cris' : ''
                     }`}
                     onClick={() => {
                         SetGroupForCleaning(group.id)
