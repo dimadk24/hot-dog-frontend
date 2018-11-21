@@ -70,7 +70,7 @@ export default (state = initialState, action) => {
                     data: g
                 }
             }
-        case GET_GROUPS_FOR_CLEAN: {
+        case GET_GROUPS_FOR_CLEAN.Loaded: {
             const groupsForClean = action.payload
             console.log('SET GROUPS FOR CLEAN:', groupsForClean)
             return {
@@ -94,7 +94,6 @@ export const GetUserGroups = () => {
             console.log('GET USER GROUPS!!!', res)
             dispatch({type: GET_USER_GROUPS.Loaded, payload: res})
         })
-        stopLoading(GET_USER_GROUPS, dispatch)
     }
 }
 
@@ -109,7 +108,6 @@ export const GetGroupsForClean = () => {
                 payload: groupsForClean
             })
         })
-        stopLoading(GET_GROUPS_FOR_CLEAN)
     }
 }
 
@@ -125,10 +123,5 @@ export const ToggleIsGroupForCleaning = (groupID) => {
 const startLoading = (loadingProperty, dispatch) => {
     dispatch({
         type: loadingProperty.Load
-    })
-}
-const stopLoading = (loadingProperty, dispatch) => {
-    dispatch({
-        type: loadingProperty.Loaded
     })
 }
