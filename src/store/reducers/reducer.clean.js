@@ -63,32 +63,27 @@ export default (state = initialState, action) => {
         }
         case UPDATE_CLEANING_STATE: {
             const cleanTasks = action.payload
-            console.log('CLEAN SHIT:')
             if (cleanTasks.length === 0) {
                 return state
             } else {
-                let settedGroups = state.groups.data
+                let settedGroups = state.groups.data.map((g) => g)
                 settedGroups.forEach((settedGroup) => {
                     cleanTasks.forEach((cleanTask) => {
                         if (settedGroup.backEndID === cleanTask.public_id) {
-                            console.log("OHH LOOK", cleanTask);
-                            if (
-                                cleanTask.status.toLowerCase() !== 'завершили'
-                            ) {
+                            if (cleanTask.status === 'Завершили') {
+                                settedGroup.cleanData = {
+                                    isCleaning: false
+                                }
+                            } else {
                                 settedGroup.cleanData = {
                                     isCleaning: true,
                                     progress: cleanTask.progress,
                                     status: cleanTask.status
                                 }
-                            } else {
-                                settedGroup.cleanData = {
-                                    isCleaning: false
-                                }
                             }
                         }
                     })
                 })
-                console.log('SETTED GROUPS SHIT CLEANING YES', settedGroups)
                 return {
                     ...state,
                     groups: {
@@ -154,7 +149,6 @@ export default (state = initialState, action) => {
             }
         case ADD_GROUP_IN_CLEAN_QUE.added: {
             const {groupData, groupID} = action.payload
-            console.log('GET GROUP DATA:', groupData)
             let groupWithData = state.groups.data.map((group) => {
                 if (group.id === groupID) {
                     return {
@@ -167,7 +161,6 @@ export default (state = initialState, action) => {
                     return group
                 }
             })
-            console.log('GROUP WITH DATA:', groupWithData)
             return {
                 ...state,
                 groups: {
@@ -205,7 +198,6 @@ export default (state = initialState, action) => {
                     return group
                 }
             })
-            console.log('DELETE GROUP:', toggledGroups)
             return {...state, groups: {...state.groups, data: toggledGroups}}
         }
         case SET_CLEANING_STATE_BY_ID: {
@@ -245,13 +237,11 @@ export const AddGroupInCleanQue = (groupID) => {
         })
         API.addGroupToCleanAndGetItData(groupID).then((r) => {
             const groupData = r.data
-            console.log('ADD GROUP TO CLEAN QUE:', groupData)
             dispatch({
                 type: ADD_GROUP_IN_CLEAN_QUE.added,
                 payload: {groupData, groupID}
             })
             API.getGroupDogsCount(groupData.id).then((r) => {
-                console.log('DOGS COUNT:', r.data)
                 const dogsCount = r.data.dogs_count
                 dispatch({
                     type: GET_DOGS_COUNT,
@@ -265,7 +255,6 @@ export const AddGroupInCleanQue = (groupID) => {
 export const setCleaningStateOnGroupByID = (groupID) => {
     return (dispatch) => {
         API.startCleanTask([groupID]).then((res) => {
-            console.log('START CLEAN TASK:', res.data)
         })
         dispatch({
             type: SET_CLEANING_STATE_BY_ID,
@@ -273,18 +262,17 @@ export const setCleaningStateOnGroupByID = (groupID) => {
         })
         let myInterval = setInterval(() => {
             API.getCleaningTasks().then((r) => {
-                console.log('CLEANING TASKS:', r.data)
                 const cleanTasks = r.data
                 dispatch({
                     type: UPDATE_CLEANING_STATE,
                     payload: cleanTasks
                 })
                 if (cleanTasks.length === 0) {
-                    console.log("CLEAR INTERVAL");
+                    console.log('CLEAR INTERVAL')
                     clearInterval(myInterval)
                 }
             })
-        }, 1000)
+        }, 50)
     }
 }
 
@@ -295,25 +283,6 @@ export const DeleteGroupFromCleanQue = (groupID, backEndID) => {
             payload: groupID
         })
         API.deleteGroupFromCleanQue(backEndID).then((r) => {
-            console.log('DELETED GROUP:', r.data)
-        })
-    }
-}
-export const ToggleIsGroupForCleaning = (groupID, inCleanQue) => {
-    console.log('TOGGLE GROUP:', groupID, inCleanQue)
-    return (dispatch) => {
-        if (!inCleanQue) {
-            API.addGroupToCleanAndGetItData(groupID).then((r) => {
-                const id = r.data.id
-                console.log('ADD PUBLICK TO CLEAN QUE:', r.data)
-                API.getGroupDogsCount(id).then((r) => {
-                    console.log('DOGS COUNT:', r.data)
-                })
-            })
-        }
-        dispatch({
-            type: ADD_GROUP_IN_CLEAN_QUE,
-            payload: groupID
         })
     }
 }

@@ -18,7 +18,7 @@ import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('let')
+console.log('clean up')
 
 class CleanPage extends Component {
     state = {
@@ -97,17 +97,6 @@ class CleanPage extends Component {
             }
             return item
         })
-    }
-
-    setCleaningStateOnPublicById(publicId) {
-        const publics = this.state.publics.slice()
-        const publicIndex = publics.findIndex((item) => item.id === publicId)
-        publics[publicIndex].cleanData = {
-            isCleaning: true,
-            progress: 0,
-            status: 'Отправляем запрос'
-        }
-        return publics
     }
 
     async startCleanTasks(public_ids) {
@@ -251,7 +240,6 @@ class CleanPage extends Component {
                 <PanelControl onCleanClick={() => this.onStartClean()} />
 
                 <div className="publics">
-                    {console.log('NEW GROUPS', groups)}
                     {groups && this.renderGroups(groups)}
                 </div>
 

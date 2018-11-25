@@ -3,7 +3,7 @@ import logger from "redux-logger";
 import thunk from 'redux-thunk'
 import rootReducer from './reducers/reducer.root'
 
-const middleware = [thunk, logger]
+const middleware = [thunk]
 const devToolsExtension = window.devToolsExtension
 const enhancers = []
 
