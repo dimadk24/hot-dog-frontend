@@ -36,7 +36,7 @@ export const API = {
             vk_id: publicID
         }),
     startCleanTask: (public_ids) =>
-        axios.post(API_URL + '/startCleanTask', {
+        axios.post('https://hot-dog.site/api/startCleanTasks', {
             user_vk_id: window.user_id,
             auth_key: window.auth_key,
             public_ids: public_ids

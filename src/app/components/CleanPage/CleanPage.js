@@ -18,7 +18,7 @@ import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('wct')
+console.log('arrray')
 
 class CleanPage extends Component {
     state = {
@@ -44,15 +44,6 @@ class CleanPage extends Component {
     }
 
     renderGroups = (groups) => {
-        groups.forEach((group) => {
-            group.onClean = async () => {
-                console.log('ON CLEAN', group)
-                await this.startCleanPublicById(group.backEndID)
-            }
-            group.cleanData = {
-                isCleaning: false
-            }
-        })
         if (!groups.length) return null
         return groups.map(
             (group) => group.inCleanQue && <Public {...group} key={group.id} />

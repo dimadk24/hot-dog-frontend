@@ -47,6 +47,9 @@ export default (state = initialState, action) => {
             groupsForClean.forEach((group) => {
                 group.inCleanQue = true
                 group.isLoadingInfo = false
+                group.cleanData = {
+                    isCleaning: false
+                }
             })
             console.log('Stop Loading clean tasks', groupsForClean)
             return {
@@ -82,6 +85,7 @@ export default (state = initialState, action) => {
                         userGroup.backEndID = settedGroup.id
                         userGroup.dogs = settedGroup.dogs
                         userGroup.followers = settedGroup.followers
+                        userGroup.cleanData = settedGroup.cleanData
                     }
                 })
             })
@@ -227,6 +231,9 @@ export const AddGroupInCleanQue = (groupID) => {
 
 export const setCleaningStateOnGroupByID = (groupID) => {
     return (dispatch) => {
+        API.startCleanTask([groupID]).then(res => {
+            console.log("START CLEAN TASK:", res.data);
+        })
         dispatch({
             type: SET_CLEANING_STATE_BY_ID,
             payload: groupID

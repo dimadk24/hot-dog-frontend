@@ -4,6 +4,9 @@ import {ProgressBar} from './ProgressBar'
 import {PublicAvatar} from './PublicAvatar'
 import './Public.css'
 import PropTypes from 'prop-types'
+import {bindActionCreators} from 'redux'
+import {connect} from 'react-redux'
+import {setCleaningStateOnGroupByID} from '../../../../store/reducers/reducer.clean'
 
 class Public extends Component {
     static propTypes = {
@@ -22,6 +25,8 @@ class Public extends Component {
     }
 
     render() {
+        const {backEndID, setCleaningStateOnGroupByID} = this.props;
+        console.log("GROUP PROPS MUHFUCKA:", this.props);
         return (
             <div className="public-wrapper">
                 <div className="public">
@@ -41,7 +46,7 @@ class Public extends Component {
                             <PublicInfo
                                 peopleCount={this.props.followers}
                                 deletedPeople={this.props.dogs}
-                                onStartClean={() => this.props.onClean(this.props.id)}
+                                onStartClean={() => setCleaningStateOnGroupByID(backEndID)}
                             />
                         )}
                     </div>
@@ -51,4 +56,9 @@ class Public extends Component {
     }
 }
 
-export default Public
+const mapStateToProps = state => ({
+
+})
+const mapDispatchToProps = dispatch => bindActionCreators({setCleaningStateOnGroupByID}, dispatch)
+
+export default connect(null, mapDispatchToProps)(Public);
