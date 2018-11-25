@@ -21,7 +21,7 @@ export const GET_GROUPS_FOR_CLEAN = {
 
 export const SET_CLEANING_STATE_BY_ID = 'SET_CLEANING_STATE_BY_ID'
 
-export const UPDATE_CLEANING_STATE = 'NOW_CLEAN_TASKS'
+export const UPDATE_CLEANING_STATE = 'UPDATE_CLEANING_STATE'
 
 const initialState = {
     groups: {
@@ -67,7 +67,7 @@ export default (state = initialState, action) => {
             if (cleanTasks.length === 0) {
                 return state
             } else {
-                const settedGroups = state.groups.data
+                let settedGroups = state.groups.data
                 settedGroups.forEach((settedGroup) => {
                     cleanTasks.forEach((cleanTask) => {
                         if (settedGroup.backEndID === cleanTask.public_id) {
@@ -211,7 +211,6 @@ export default (state = initialState, action) => {
         case SET_CLEANING_STATE_BY_ID: {
             let groupID = action.payload
             let withCleanTask = state.groups.data.map((group) => {
-                console.log('COMPARE:', group, groupID)
                 if (group.backEndID === groupID) {
                     return {
                         ...group,
@@ -285,7 +284,7 @@ export const setCleaningStateOnGroupByID = (groupID) => {
                     clearInterval(myInterval)
                 }
             })
-        }, 100)
+        }, 1000)
     }
 }
 

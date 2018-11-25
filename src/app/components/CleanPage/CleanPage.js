@@ -18,7 +18,7 @@ import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('clear interval')
+console.log('let')
 
 class CleanPage extends Component {
     state = {
@@ -27,20 +27,9 @@ class CleanPage extends Component {
         isAddGroupOpen: false
     }
 
-    async componentWillMount() {
+    componentWillMount() {
         const {GetGroupsForCleanAndUserGroups} = this.props
         GetGroupsForCleanAndUserGroups()
-
-        let groups = await this.loadGroups()
-
-        const cleanTasks = await this.loadCleanTasks()
-
-        if (cleanTasks && cleanTasks.length)
-            this.timerId = setInterval(async () => {
-                await this.updateCleanTasks()
-            }, 1500)
-        groups = this.addCleanTaskToGroups(groups, cleanTasks)
-        this.setGroups(groups)
     }
 
     renderGroups = (groups) => {
@@ -56,74 +45,8 @@ class CleanPage extends Component {
         }
     }
 
-    setGroups(groups) {
-        for (const group of groups) {
-            if (this.cleanTaskIsFinished(group.cleanData)) {
-                this.showFinishedAlert(group)
-            }
-        }
-        // console.log('Setting groups:', groups)
-        this.setState({publics: groups})
-    }
-
-    async loadCleanTasks() {
-        return (await axios.get('https://hot-dog.site/api/getCleanTasks', {
-            params: {
-                user_vk_id: window.user_id,
-                auth_key: window.auth_key
-            }
-        })).data
-    }
-
-    async loadGroups() {
-        return (await axios.get('https://hot-dog.site/api/getPublics', {
-            params: {
-                user_vk_id: window.user_id,
-                auth_key: window.auth_key
-            }
-        })).data
-    }
-
-    showModal = async () => {
-        const addingPublicLink = await swal({
-            text: 'Введите ссылку на сообщество:',
-            content: 'input',
-            button: 'Добавить!'
-        })
-        let publicId
-        try {
-            publicId = await this.convertPublicLinkToId(addingPublicLink)
-        } catch (e) {
-            console.log(e)
-        }
-        const newPublic = await this.addPublicAndGetItsData(publicId)
-        newPublic.dogs = 'анализ'
-        newPublic.cleanData = {
-            isCleaning: false
-        }
-        newPublic.onClean = async () => {
-            await this.startCleanPublicById(newPublic.id)
-        }
-        console.log(newPublic)
-        this.setState((prevState) => {
-            console.log(prevState)
-            const publics = prevState.publics.concat(newPublic)
-            console.log(publics)
-            return {publics: publics}
-        })
-        const dogs = await this.getDogsCount(newPublic.id)
-        this.setState((prevState) => {
-            const alreadyAddedPublic = this.getPublicById(
-                prevState.publics,
-                newPublic.id
-            )
-            alreadyAddedPublic.dogs = dogs
-            return {publics: prevState.publics}
-        })
-    }
-
     async startCleanPublicById(publicID) {
-        const {setCleaningStateOnGroupByID} = this.props;
+        const {setCleaningStateOnGroupByID} = this.props
         const response = await this.startCleanTasks([publicID])
         if ('error' in response) {
             if (response.error.id === 1) {
@@ -142,20 +65,6 @@ class CleanPage extends Component {
                 await this.props.updateBalance()
             }, 1500)
         }
-    }
-
-    async convertPublicLinkToId(link) {
-        const searchElement = 'vk.com/'
-        if (!link.includes(searchElement)) {
-            throw new Error('no vk.com in link')
-        }
-        const name = link.slice(
-            link.indexOf(searchElement) + searchElement.length
-        )
-        if (this.isId(name)) {
-            return this.getPublicId(name)
-        }
-        return await this.resolvePublicName(name)
     }
 
     async onStartClean() {
@@ -217,53 +126,6 @@ class CleanPage extends Component {
         return this.state.publics.map((item) => item.id)
     }
 
-    resolvePublicName(name) {
-        return new Promise((resolve, reject) => {
-            /*global VK*/
-            VK.api(
-                'utils.resolveScreenName',
-                {
-                    screen_name: name,
-                    v: '5.85'
-                },
-                ({response}) => {
-                    if (response.type === 'group') {
-                        // noinspection JSUnresolvedVariable
-                        resolve(response.object_id)
-                    }
-                    reject('not group')
-                }
-            )
-        })
-    }
-
-    isId(name) {
-        return Boolean(name.match(/^((club)|(public))\d+$/))
-    }
-
-    getPublicId(id) {
-        return +id.match(/\d+$/)[0]
-    }
-
-    async addPublicAndGetItsData(publicId) {
-        return (await axios.post('https://hot-dog.site/api/addPublic', {
-            user_vk_id: window.user_id,
-            auth_key: window.auth_key,
-            vk_id: publicId
-        })).data
-    }
-
-    async getDogsCount(publicId) {
-        // noinspection JSUnresolvedVariable
-        return (await axios.get('https://hot-dog.site/api/getDogsCount', {
-            params: {
-                id: publicId,
-                user_vk_id: window.user_id,
-                auth_key: window.auth_key
-            }
-        })).data.dogs_count
-    }
-
     async getAccessTokenFromUser() {
         let wrapper = window.document.createElement('div')
         ReactDOM.render(<InputModal />, wrapper)
@@ -286,38 +148,6 @@ class CleanPage extends Component {
             access_token: token,
             user_vk_id: window.user_id,
             auth_key: window.auth_key
-        })
-    }
-
-    addCleanTaskToGroups(publics, cleanTasks) {
-        if (cleanTasks && cleanTasks.length) {
-            for (const publik of publics) {
-                publik.onClean = async () => {
-                    await this.startCleanPublicById(publik.id)
-                }
-                for (const cleanTask of cleanTasks) {
-                    // noinspection JSUnresolvedVariable
-                    if (publik.id === cleanTask.public_id)
-                        publik.cleanData = {
-                            isCleaning: true,
-                            progress: cleanTask.progress,
-                            status: cleanTask.status
-                        }
-                }
-                if (!publik.cleanData) {
-                    publik.cleanData = {
-                        isCleaning: false
-                    }
-                }
-            }
-            return publics
-        }
-        return publics.map((publik) => {
-            publik.cleanData = {isCleaning: false}
-            publik.onClean = async () => {
-                await this.startCleanPublicById(publik.id)
-            }
-            return publik
         })
     }
 
@@ -346,8 +176,6 @@ class CleanPage extends Component {
         )
         this.setGroups(publics)
     }
-
-    showFinishedAlert(publik) {}
 
     async refreshPublicById(publicId) {
         const freshPublic = await this.getFreshPublic(publicId)
@@ -413,8 +241,9 @@ class CleanPage extends Component {
             isAddGroupOpen: !this.state.isAddGroupOpen
         })
     }
+
     render() {
-        const {publics, isAddGroupOpen} = this.state
+        const {isAddGroupOpen} = this.state
         const {groups} = this.props
 
         return (
@@ -422,7 +251,7 @@ class CleanPage extends Component {
                 <PanelControl onCleanClick={() => this.onStartClean()} />
 
                 <div className="publics">
-                    {/*{console.log('SETTED PUBLICKS DIMA DK:', publics, groups)}*/}
+                    {console.log('NEW GROUPS', groups)}
                     {groups && this.renderGroups(groups)}
                 </div>
 

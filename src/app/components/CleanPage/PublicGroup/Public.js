@@ -26,6 +26,7 @@ class Public extends Component {
 
     render() {
         const {backEndID, setCleaningStateOnGroupByID} = this.props;
+        console.log("PROPS SHIT:", this.props);
         return (
             <div className="public-wrapper">
                 <div className="public">
@@ -55,9 +56,7 @@ class Public extends Component {
     }
 }
 
-const mapStateToProps = state => ({
 
-})
 const mapDispatchToProps = dispatch => bindActionCreators({setCleaningStateOnGroupByID}, dispatch)
 
 export default connect(null, mapDispatchToProps)(Public);

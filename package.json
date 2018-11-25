@@ -43,6 +43,7 @@
     ],
     "devDependencies": {
         "node-sass": "^4.10.0",
-        "prop-types": "latest"
+        "prop-types": "latest",
+        "redux-logger": "^3.0.6"
     }
 }
