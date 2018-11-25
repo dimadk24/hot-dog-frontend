@@ -40,6 +40,21 @@ export const API = {
             user_vk_id: window.user_id,
             auth_key: window.auth_key,
             public_ids: public_ids
+        }),
+    getCleaningTasks: () =>
+        axios.get('https://hot-dog.site/api/getCleanTasks', {
+            params: {
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key
+            }
+        }),
+    getFreshPublic: (public_id) =>
+        axios.get('https://hot-dog.site/api/refreshPublic', {
+            params: {
+                user_vk_id: window.user_id,
+                auth_key: window.auth_key,
+                id: public_id
+            }
         })
 }
 

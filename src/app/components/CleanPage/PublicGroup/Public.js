@@ -26,7 +26,6 @@ class Public extends Component {
 
     render() {
         const {backEndID, setCleaningStateOnGroupByID} = this.props;
-        console.log("GROUP PROPS MUHFUCKA:", this.props);
         return (
             <div className="public-wrapper">
                 <div className="public">

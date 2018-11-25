@@ -21,6 +21,8 @@ export const GET_GROUPS_FOR_CLEAN = {
 
 export const SET_CLEANING_STATE_BY_ID = 'SET_CLEANING_STATE_BY_ID'
 
+export const UPDATE_CLEANING_STATE = 'NOW_CLEAN_TASKS'
+
 const initialState = {
     groups: {
         data: [],
@@ -33,7 +35,6 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type) {
         case GET_GROUPS_FOR_CLEAN.Load: {
-            console.log('Start Load clean tasks')
             return {
                 ...state,
                 groups: {
@@ -51,7 +52,6 @@ export default (state = initialState, action) => {
                     isCleaning: false
                 }
             })
-            console.log('Stop Loading clean tasks', groupsForClean)
             return {
                 ...state,
                 groups: {
@@ -61,8 +61,44 @@ export default (state = initialState, action) => {
                 }
             }
         }
+        case UPDATE_CLEANING_STATE: {
+            const cleanTasks = action.payload
+            console.log('CLEAN SHIT:')
+            if (cleanTasks.length === 0) {
+                return state
+            } else {
+                const settedGroups = state.groups.data
+                settedGroups.forEach((settedGroup) => {
+                    cleanTasks.forEach((cleanTask) => {
+                        if (settedGroup.backEndID === cleanTask.public_id) {
+                            console.log("OHH LOOK", cleanTask);
+                            if (
+                                cleanTask.status.toLowerCase() !== 'завершили'
+                            ) {
+                                settedGroup.cleanData = {
+                                    isCleaning: true,
+                                    progress: cleanTask.progress,
+                                    status: cleanTask.status
+                                }
+                            } else {
+                                settedGroup.cleanData = {
+                                    isCleaning: false
+                                }
+                            }
+                        }
+                    })
+                })
+                console.log('SETTED GROUPS SHIT CLEANING YES', settedGroups)
+                return {
+                    ...state,
+                    groups: {
+                        ...state.groups,
+                        data: settedGroups
+                    }
+                }
+            }
+        }
         case GET_USER_GROUPS.Load: {
-            console.log('Start Load User Groups')
             return {
                 ...state,
                 groups: {
@@ -89,7 +125,6 @@ export default (state = initialState, action) => {
                     }
                 })
             })
-            console.log('End Load User Groups', userGroups)
             return {
                 ...state,
                 groups: {
@@ -153,7 +188,6 @@ export default (state = initialState, action) => {
                     return group
                 }
             })
-            console.log('SET THE DOGS:', groupWithDogs)
             return {
                 ...state,
                 groups: {
@@ -231,13 +265,27 @@ export const AddGroupInCleanQue = (groupID) => {
 
 export const setCleaningStateOnGroupByID = (groupID) => {
     return (dispatch) => {
-        API.startCleanTask([groupID]).then(res => {
-            console.log("START CLEAN TASK:", res.data);
+        API.startCleanTask([groupID]).then((res) => {
+            console.log('START CLEAN TASK:', res.data)
         })
         dispatch({
             type: SET_CLEANING_STATE_BY_ID,
             payload: groupID
         })
+        let myInterval = setInterval(() => {
+            API.getCleaningTasks().then((r) => {
+                console.log('CLEANING TASKS:', r.data)
+                const cleanTasks = r.data
+                dispatch({
+                    type: UPDATE_CLEANING_STATE,
+                    payload: cleanTasks
+                })
+                if (cleanTasks.length === 0) {
+                    console.log("CLEAR INTERVAL");
+                    clearInterval(myInterval)
+                }
+            })
+        }, 100)
     }
 }
 
@@ -279,6 +327,13 @@ export const GetGroupsForCleanAndUserGroups = () => {
             dispatch({
                 type: GET_GROUPS_FOR_CLEAN.Loaded,
                 payload: groupsForClean
+            })
+            API.getCleaningTasks().then((r) => {
+                const tasksInClean = r.data
+                dispatch({
+                    type: UPDATE_CLEANING_STATE,
+                    payload: tasksInClean
+                })
             })
             startLoading(GET_USER_GROUPS, dispatch)
             const groups = API.getUserGroups()

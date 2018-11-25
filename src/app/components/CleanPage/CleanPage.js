@@ -18,7 +18,7 @@ import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('arrray')
+console.log('clear interval')
 
 class CleanPage extends Component {
     state = {
@@ -136,11 +136,11 @@ class CleanPage extends Component {
         } else {
             setCleaningStateOnGroupByID(publicID)
             // this.setGroups(publics)
-            // this.timerId = setInterval(async () => {
-            //     await this.updateCleanTasks()
-            //     console.log(this)
-            //     await this.props.updateBalance()
-            // }, 1500)
+            this.timerId = setInterval(async () => {
+                await this.updateCleanTasks()
+                console.log(this)
+                await this.props.updateBalance()
+            }, 1500)
         }
     }
 
@@ -422,7 +422,7 @@ class CleanPage extends Component {
                 <PanelControl onCleanClick={() => this.onStartClean()} />
 
                 <div className="publics">
-                    {console.log('SETTED PUBLICKS DIMA DK:', publics, groups)}
+                    {/*{console.log('SETTED PUBLICKS DIMA DK:', publics, groups)}*/}
                     {groups && this.renderGroups(groups)}
                 </div>
 
