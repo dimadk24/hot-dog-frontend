@@ -6,7 +6,10 @@ import {bindActionCreators} from 'redux'
 import {AddPublicButton} from './PublicGroup/AddPublicButton'
 import swal from 'sweetalert'
 import axios from 'axios'
-import {GetGroupsForCleanAndUserGroups} from '../../../store/reducers/reducer.clean'
+import {
+    GetGroupsForCleanAndUserGroups,
+    setCleaningStateOnGroupByID
+} from '../../../store/reducers/reducer.clean'
 import ReactDOM from 'react-dom'
 import {InputModal} from './InputModal'
 import {VideoGuide} from './VideoGuide'
@@ -15,7 +18,7 @@ import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('logger')
+console.log('wct')
 
 class CleanPage extends Component {
     state = {
@@ -31,7 +34,6 @@ class CleanPage extends Component {
         let groups = await this.loadGroups()
 
         const cleanTasks = await this.loadCleanTasks()
-        // console.log('CLEAN TASKS:', cleanTasks)
 
         if (cleanTasks && cleanTasks.length)
             this.timerId = setInterval(async () => {
@@ -42,8 +44,19 @@ class CleanPage extends Component {
     }
 
     renderGroups = (groups) => {
+        groups.forEach((group) => {
+            group.onClean = async () => {
+                console.log('ON CLEAN', group)
+                await this.startCleanPublicById(group.backEndID)
+            }
+            group.cleanData = {
+                isCleaning: false
+            }
+        })
         if (!groups.length) return null
-        return groups.map((group) => <Public {...group} key={group.id} />)
+        return groups.map(
+            (group) => group.inCleanQue && <Public {...group} key={group.id} />
+        )
     }
 
     componentWillUnmount() {
@@ -118,8 +131,9 @@ class CleanPage extends Component {
         })
     }
 
-    async startCleanPublicById(publicId) {
-        const response = await this.startCleanTasks([publicId])
+    async startCleanPublicById(publicID) {
+        const {setCleaningStateOnGroupByID} = this.props;
+        const response = await this.startCleanTasks([publicID])
         if ('error' in response) {
             if (response.error.id === 1) {
                 const accessToken = await this.getAccessTokenFromUser()
@@ -129,13 +143,13 @@ class CleanPage extends Component {
                 await this.showNotEnoughMoneyModal(response.error.value)
             }
         } else {
-            const publics = this.setCleaningStateOnPublicById(publicId)
-            this.setGroups(publics)
-            this.timerId = setInterval(async () => {
-                await this.updateCleanTasks()
-                console.log(this)
-                await this.props.updateBalance()
-            }, 1500)
+            setCleaningStateOnGroupByID(publicID)
+            // this.setGroups(publics)
+            // this.timerId = setInterval(async () => {
+            //     await this.updateCleanTasks()
+            //     console.log(this)
+            //     await this.props.updateBalance()
+            // }, 1500)
         }
     }
 
@@ -417,7 +431,8 @@ class CleanPage extends Component {
                 <PanelControl onCleanClick={() => this.onStartClean()} />
 
                 <div className="publics">
-                    {publics && this.renderGroups(publics)}
+                    {console.log('SETTED PUBLICKS DIMA DK:', publics, groups)}
+                    {groups && this.renderGroups(groups)}
                 </div>
 
                 <AddPublicButton onClick={this.toggleModal} />
@@ -444,7 +459,8 @@ const mapStateToProps = ({clean}) => ({
 const mapDispatchToProps = (dispatch) =>
     bindActionCreators(
         {
-            GetGroupsForCleanAndUserGroups
+            GetGroupsForCleanAndUserGroups,
+            setCleaningStateOnGroupByID
         },
         dispatch
     )

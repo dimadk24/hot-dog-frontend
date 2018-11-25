@@ -21,7 +21,26 @@ export const API = {
                 auth_key: window.auth_key
             }
         }),
-    getGroupUsersCount: (groupID) => axios.post(API_URL + '/addPublic')
+    deleteGroupFromCleanQue: (backEndID) => {
+        console.log('DELETE REQUEST, id is:', backEndID)
+        return axios.delete(API_URL + '/deletePublic', {
+            id: backEndID,
+            user_vk_id: window.user_id,
+            auth_key: window.auth_key
+        })
+    },
+    addGroupToCleanAndGetItData: (publicID) =>
+        axios.post(API_URL + '/addPublic', {
+            user_vk_id: window.user_id,
+            auth_key: window.auth_key,
+            vk_id: publicID
+        }),
+    startCleanTask: (public_ids) =>
+        axios.post(API_URL + '/startCleanTask', {
+            user_vk_id: window.user_id,
+            auth_key: window.auth_key,
+            public_ids: public_ids
+        })
 }
 
 const getGroupsPromise = new Promise((resolve, reject) => {

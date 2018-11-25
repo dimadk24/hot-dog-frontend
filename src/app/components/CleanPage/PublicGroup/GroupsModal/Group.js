@@ -1,10 +1,13 @@
 import React, {Component} from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {ToggleIsGroupForCleaning} from '../../../../../store/reducers/reducer.clean'
+import {
+    AddGroupInCleanQue,
+    DeleteGroupFromCleanQue
+} from '../../../../../store/reducers/reducer.clean'
 class Group extends Component {
     render() {
-        const {group, SetGroupForCleaning} = this.props
+        const {group, AddGroupInCleanQue, DeleteGroupFromCleanQue} = this.props
         return (
             <div className="group">
                 <div className="group__details">
@@ -16,7 +19,12 @@ class Group extends Component {
                         group.inCleanQue ? 'plus-sign--cris' : ''
                     }`}
                     onClick={() => {
-                        SetGroupForCleaning(group.id)
+                        if (group.inCleanQue) {
+                            console.log("Group for deleting", group);
+                            DeleteGroupFromCleanQue(group.id, group.backEndID)
+                        } else {
+                            AddGroupInCleanQue(group.id)
+                        }
                     }}
                 />
             </div>
@@ -28,7 +36,8 @@ const mapStateToProps = (state) => ({})
 const mapDispatchToProps = (dispatch) =>
     bindActionCreators(
         {
-            SetGroupForCleaning: ToggleIsGroupForCleaning
+            AddGroupInCleanQue,
+            DeleteGroupFromCleanQue
         },
         dispatch
     )
