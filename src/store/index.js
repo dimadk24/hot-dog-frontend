@@ -1,7 +1,10 @@
 import {createStore, applyMiddleware, compose} from 'redux'
-import logger from "redux-logger";
+import logger from 'redux-logger'
 import thunk from 'redux-thunk'
+import createHistory from 'history/createBrowserHistory'
 import rootReducer from './reducers/reducer.root'
+
+export const history = createHistory()
 
 const middleware = [thunk]
 const devToolsExtension = window.devToolsExtension

@@ -6,6 +6,7 @@ import TopBar from './components/TopBar'
 import AddMoneyPage from './components/AddMoneyPage/AddMoneyPage'
 import axios from 'axios'
 import FeedbackPage from './components/FeedbackPage/FeedbackPage'
+import {history} from '../store'
 
 if (process.env.NODE_ENV === 'production') {
     // noinspection JSUnresolvedVariable
@@ -55,7 +56,7 @@ class App extends Component {
 
     render() {
         return (
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <BrowserRouter basename={process.env.PUBLIC_URL} history={history}>
                 <Fragment>
                     <TopBar balance={this.state.balance} />
                     <Switch>

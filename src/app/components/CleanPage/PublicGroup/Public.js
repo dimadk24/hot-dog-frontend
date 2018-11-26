@@ -6,7 +6,7 @@ import './Public.css'
 import PropTypes from 'prop-types'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {setCleaningStateOnGroupByID} from '../../../../store/reducers/reducer.clean'
+import {cleanGroupByID} from '../../../../store/reducers/reducer.clean'
 
 class Public extends Component {
     static propTypes = {
@@ -57,6 +57,6 @@ class Public extends Component {
 }
 
 
-const mapDispatchToProps = dispatch => bindActionCreators({setCleaningStateOnGroupByID}, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators({setCleaningStateOnGroupByID: cleanGroupByID}, dispatch)
 
 export default connect(null, mapDispatchToProps)(Public);

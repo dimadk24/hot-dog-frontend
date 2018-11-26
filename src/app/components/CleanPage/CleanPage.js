@@ -8,7 +8,8 @@ import swal from 'sweetalert'
 import axios from 'axios'
 import {
     GetGroupsForCleanAndUserGroups,
-    setCleaningStateOnGroupByID
+    cleanGroupByID,
+    cleanAllGroups
 } from '../../../store/reducers/reducer.clean'
 import ReactDOM from 'react-dom'
 import {InputModal} from './InputModal'
@@ -18,7 +19,7 @@ import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('clean up')
+console.log('history ')
 
 class CleanPage extends Component {
     state = {
@@ -37,12 +38,6 @@ class CleanPage extends Component {
         return groups.map(
             (group) => group.inCleanQue && <Public {...group} key={group.id} />
         )
-    }
-
-    componentWillUnmount() {
-        if (this.timerId) {
-            clearInterval(this.timerId)
-        }
     }
 
     async startCleanPublicById(publicID) {
@@ -86,17 +81,6 @@ class CleanPage extends Component {
                 await this.props.updateBalance()
             }, 1500)
         }
-    }
-
-    setCleaningStateOnPublics() {
-        return this.state.publics.map((item) => {
-            item.cleanData = {
-                isCleaning: true,
-                progress: 0,
-                status: 'Отправляем запрос'
-            }
-            return item
-        })
     }
 
     async startCleanTasks(public_ids) {
@@ -233,11 +217,11 @@ class CleanPage extends Component {
 
     render() {
         const {isAddGroupOpen} = this.state
-        const {groups} = this.props
+        const {groups, cleanAllGroups} = this.props
 
         return (
             <div className="clean">
-                <PanelControl onCleanClick={() => this.onStartClean()} />
+                <PanelControl onCleanClick={() => cleanAllGroups()} />
 
                 <div className="publics">
                     {groups && this.renderGroups(groups)}
@@ -268,7 +252,8 @@ const mapDispatchToProps = (dispatch) =>
     bindActionCreators(
         {
             GetGroupsForCleanAndUserGroups,
-            setCleaningStateOnGroupByID
+            setCleaningStateOnGroupByID: cleanGroupByID,
+            cleanAllGroups
         },
         dispatch
     )

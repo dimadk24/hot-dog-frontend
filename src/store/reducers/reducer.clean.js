@@ -1,4 +1,6 @@
 import {API} from '../../services/services.api'
+import swal from 'sweetalert'
+import {history} from '../index'
 
 export const GET_USER_GROUPS = {
     Load: 'groups/USER_GROUPS_LOAD',
@@ -10,18 +12,15 @@ export const ADD_GROUP_IN_CLEAN_QUE = {
     added: 'ADD_GROUP_IN_CLEAN_QUE_ADD_TO_SERVER'
 }
 export const GET_DOGS_COUNT = 'GET_DOGS_COUNT '
-
 export const DELETE_GROUP_FROM_CLEAN_QUE = 'DELETE_GROUP_FROM_CLEAN_QUE'
-
 export const GET_GROUPS_FOR_CLEAN = {
     Load: 'groups/GET_GROUPS_FOR_CLEAN_LOAD',
     Loaded: 'groups/GET_GROUPS_FOR_CLEAN_LOADED',
     Errors: 'groups/GET_GROUPS_FOR_CLEAN_ERRORS'
 }
-
 export const SET_CLEANING_STATE_BY_ID = 'SET_CLEANING_STATE_BY_ID'
-
 export const UPDATE_CLEANING_STATE = 'UPDATE_CLEANING_STATE'
+export const CLEAN_ALL_GROUPS = 'CLEAN_ALL_GROUPS'
 
 const initialState = {
     groups: {
@@ -224,8 +223,51 @@ export default (state = initialState, action) => {
                 }
             }
         }
+        case CLEAN_ALL_GROUPS: {
+            const allGroupsWithClean = state.groups.data.map((group) => {
+                API.startCleanTask([group.backEndID])
+                return {
+                    ...group,
+                    cleanData: {
+                        isCleaning: true,
+                        progress: 0,
+                        status: 'Отправляем запрос'
+                    }
+                }
+            })
+            return {
+                ...state,
+                groups: {
+                    ...state.groups,
+                    data: allGroupsWithClean
+                }
+            }
+        }
         default:
             return state
+    }
+}
+
+export const cleanAllGroups = () => {
+    return (dispatch) => {
+        console.log("HISTORY IS:", history);
+        dispatch({
+            type: CLEAN_ALL_GROUPS
+        })
+        let myInterval = setInterval(() => {
+            API.getCleaningTasks().then((r) => {
+                const cleanTasks = r.data
+                dispatch({
+                    type: UPDATE_CLEANING_STATE,
+                    payload: cleanTasks
+                })
+                if (cleanTasks.length === 0) {
+                    console.log('CLEAR INTERVAL')
+                    showCommentAlert()
+                    clearInterval(myInterval)
+                }
+            })
+        }, 50)
     }
 }
 
@@ -252,10 +294,9 @@ export const AddGroupInCleanQue = (groupID) => {
     }
 }
 
-export const setCleaningStateOnGroupByID = (groupID) => {
+export const cleanGroupByID = (groupID) => {
     return (dispatch) => {
-        API.startCleanTask([groupID]).then((res) => {
-        })
+        API.startCleanTask([groupID]).then((res) => {})
         dispatch({
             type: SET_CLEANING_STATE_BY_ID,
             payload: groupID
@@ -269,6 +310,7 @@ export const setCleaningStateOnGroupByID = (groupID) => {
                 })
                 if (cleanTasks.length === 0) {
                     console.log('CLEAR INTERVAL')
+                    showCommentAlert()
                     clearInterval(myInterval)
                 }
             })
@@ -282,8 +324,7 @@ export const DeleteGroupFromCleanQue = (groupID, backEndID) => {
             type: DELETE_GROUP_FROM_CLEAN_QUE,
             payload: groupID
         })
-        API.deleteGroupFromCleanQue(backEndID).then((r) => {
-        })
+        API.deleteGroupFromCleanQue(backEndID).then((r) => {})
     }
 }
 
@@ -296,13 +337,19 @@ export const GetGroupsForCleanAndUserGroups = () => {
                 type: GET_GROUPS_FOR_CLEAN.Loaded,
                 payload: groupsForClean
             })
-            API.getCleaningTasks().then((r) => {
-                const tasksInClean = r.data
-                dispatch({
-                    type: UPDATE_CLEANING_STATE,
-                    payload: tasksInClean
+            let myInterval = setInterval(() => {
+                API.getCleaningTasks().then((r) => {
+                    const cleanTasks = r.data
+                    dispatch({
+                        type: UPDATE_CLEANING_STATE,
+                        payload: cleanTasks
+                    })
+                    if (cleanTasks.length === 0) {
+                        console.log('CLEAR INTERVAL')
+                        clearInterval(myInterval)
+                    }
                 })
-            })
+            }, 50)
             startLoading(GET_USER_GROUPS, dispatch)
             const groups = API.getUserGroups()
             groups.then((res) => {
@@ -315,5 +362,18 @@ export const GetGroupsForCleanAndUserGroups = () => {
 const startLoading = (loadingProperty, dispatch) => {
     dispatch({
         type: loadingProperty.Load
+    })
+}
+
+function showCommentAlert() {
+    console.log('Comment alert')
+    const response = swal({
+        title: 'Спасибо!',
+        icon: 'success',
+        text: 'Оставьте, пожалуйста, отзыв о сервисе :)',
+        button: 'Хорошо'
+    })
+    response.then((r) => {
+        console.log('RES:', r)
     })
 }
