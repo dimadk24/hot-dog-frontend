@@ -1,12 +1,12 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import logger from 'redux-logger'
 import thunk from 'redux-thunk'
-import createHistory from 'history/createBrowserHistory'
+import {createBrowserHistory} from 'history'
 import rootReducer from './reducers/reducer.root'
 
-export const history = createHistory()
+export const history = createBrowserHistory()
 
-const middleware = [thunk]
+const middleware = [thunk, logger]
 const devToolsExtension = window.devToolsExtension
 const enhancers = []
 

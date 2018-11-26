@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {cleanGroupByID} from '../../../../store/reducers/reducer.clean'
+import {history} from '../../../../store'
 
 class Public extends Component {
     static propTypes = {
@@ -25,8 +26,7 @@ class Public extends Component {
     }
 
     render() {
-        const {backEndID, setCleaningStateOnGroupByID} = this.props;
-        console.log("PROPS SHIT:", this.props);
+        const {backEndID, cleanGroupByID} = this.props;
         return (
             <div className="public-wrapper">
                 <div className="public">
@@ -46,7 +46,9 @@ class Public extends Component {
                             <PublicInfo
                                 peopleCount={this.props.followers}
                                 deletedPeople={this.props.dogs}
-                                onStartClean={() => setCleaningStateOnGroupByID(backEndID)}
+                                onStartClean={() => {
+                                    cleanGroupByID(backEndID, () => {history.push("/feedback")})
+                                }}
                             />
                         )}
                     </div>
@@ -57,6 +59,6 @@ class Public extends Component {
 }
 
 
-const mapDispatchToProps = dispatch => bindActionCreators({setCleaningStateOnGroupByID: cleanGroupByID}, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators({cleanGroupByID}, dispatch)
 
 export default connect(null, mapDispatchToProps)(Public);

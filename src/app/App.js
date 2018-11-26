@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react'
-import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import {Route, Router, Switch} from 'react-router-dom'
 import CleanPage from './components/CleanPage/CleanPage'
 import * as Sentry from '@sentry/browser'
 import TopBar from './components/TopBar'
@@ -28,6 +28,7 @@ class App extends Component {
     async componentWillMount() {
         window.user_id = getQueryParam('viewer_id')
         window.auth_key = getQueryParam('auth_key')
+        history.push('/')
         await this.updateBalance()
     }
 
@@ -56,7 +57,7 @@ class App extends Component {
 
     render() {
         return (
-            <BrowserRouter basename={process.env.PUBLIC_URL} history={history}>
+            <Router basename={process.env.PUBLIC_URL} history={history}>
                 <Fragment>
                     <TopBar balance={this.state.balance} />
                     <Switch>
@@ -66,7 +67,9 @@ class App extends Component {
                             render={() => (
                                 <CleanPage
                                     balance={this.state.balance}
-                                    updateBalance={this.updateBalance.bind(this)}
+                                    updateBalance={this.updateBalance.bind(
+                                        this
+                                    )}
                                 />
                             )}
                         />
@@ -75,15 +78,16 @@ class App extends Component {
                             path={'/add_money'}
                             render={() => (
                                 <AddMoneyPage
-                                    updateBalance={this.updateBalance.bind(this)
-                                    }
+                                    updateBalance={this.updateBalance.bind(
+                                        this
+                                    )}
                                 />
                             )}
                         />
                         <Route path={'/feedback'} component={FeedbackPage} />
                     </Switch>
                 </Fragment>
-            </BrowserRouter>
+            </Router>
         )
     }
 }

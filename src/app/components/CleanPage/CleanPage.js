@@ -16,10 +16,11 @@ import {InputModal} from './InputModal'
 import {VideoGuide} from './VideoGuide'
 import {Redirect} from 'react-router-dom'
 import GroupsModal from './PublicGroup/GroupsModal/GroupsModal'
+import {history} from '../../../store'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('history ')
+console.log('clean data')
 
 class CleanPage extends Component {
     state = {
@@ -221,7 +222,13 @@ class CleanPage extends Component {
 
         return (
             <div className="clean">
-                <PanelControl onCleanClick={() => cleanAllGroups()} />
+                <PanelControl
+                    onCleanClick={() =>
+                        cleanAllGroups(() => {
+                            history.push('/feedback')
+                        })
+                    }
+                />
 
                 <div className="publics">
                     {groups && this.renderGroups(groups)}

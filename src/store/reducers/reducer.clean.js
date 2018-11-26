@@ -1,7 +1,6 @@
 import {API} from '../../services/services.api'
 import swal from 'sweetalert'
-import {history} from '../index'
-
+import axios from 'axios'
 export const GET_USER_GROUPS = {
     Load: 'groups/USER_GROUPS_LOAD',
     Loaded: 'groups/USER_GROUPS_LOADED',
@@ -133,7 +132,10 @@ export default (state = initialState, action) => {
                 if (group.id === groupID) {
                     return {
                         ...group,
-                        inCleanQue: true
+                        inCleanQue: true,
+                        cleanData: {
+                            isCleaning: false
+                        }
                     }
                 } else {
                     return group
@@ -248,9 +250,8 @@ export default (state = initialState, action) => {
     }
 }
 
-export const cleanAllGroups = () => {
+export const cleanAllGroups = (cb) => {
     return (dispatch) => {
-        console.log("HISTORY IS:", history);
         dispatch({
             type: CLEAN_ALL_GROUPS
         })
@@ -262,12 +263,11 @@ export const cleanAllGroups = () => {
                     payload: cleanTasks
                 })
                 if (cleanTasks.length === 0) {
-                    console.log('CLEAR INTERVAL')
-                    showCommentAlert()
+                    showCommentAlert(cb)
                     clearInterval(myInterval)
                 }
             })
-        }, 50)
+        }, 500)
     }
 }
 
@@ -294,14 +294,14 @@ export const AddGroupInCleanQue = (groupID) => {
     }
 }
 
-export const cleanGroupByID = (groupID) => {
+export const cleanGroupByID = (groupID, cb) => {
     return (dispatch) => {
         API.startCleanTask([groupID]).then((res) => {})
         dispatch({
             type: SET_CLEANING_STATE_BY_ID,
             payload: groupID
         })
-        let myInterval = setInterval(() => {
+        let myInterval = setInterval(async () => {
             API.getCleaningTasks().then((r) => {
                 const cleanTasks = r.data
                 dispatch({
@@ -309,13 +309,21 @@ export const cleanGroupByID = (groupID) => {
                     payload: cleanTasks
                 })
                 if (cleanTasks.length === 0) {
-                    console.log('CLEAR INTERVAL')
-                    showCommentAlert()
+                    showCommentAlert(cb)
                     clearInterval(myInterval)
                 }
             })
-        }, 50)
+        }, 500)
     }
+}
+
+async function getCleanTasks() {
+    return (await axios.get('https://hot-dog.site/api/getCleanTasks', {
+        params: {
+            user_vk_id: window.user_id,
+            auth_key: window.auth_key
+        }
+    })).data
 }
 
 export const DeleteGroupFromCleanQue = (groupID, backEndID) => {
@@ -345,11 +353,10 @@ export const GetGroupsForCleanAndUserGroups = () => {
                         payload: cleanTasks
                     })
                     if (cleanTasks.length === 0) {
-                        console.log('CLEAR INTERVAL')
                         clearInterval(myInterval)
                     }
                 })
-            }, 50)
+            }, 500)
             startLoading(GET_USER_GROUPS, dispatch)
             const groups = API.getUserGroups()
             groups.then((res) => {
@@ -365,7 +372,7 @@ const startLoading = (loadingProperty, dispatch) => {
     })
 }
 
-function showCommentAlert() {
+function showCommentAlert(cb) {
     console.log('Comment alert')
     const response = swal({
         title: 'Спасибо!',
@@ -374,6 +381,11 @@ function showCommentAlert() {
         button: 'Хорошо'
     })
     response.then((r) => {
-        console.log('RES:', r)
+        console.log('R IS:', r)
+        if (r === true) {
+            if (cb) {
+                cb()
+            }
+        }
     })
 }
