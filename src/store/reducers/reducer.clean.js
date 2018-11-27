@@ -1,6 +1,11 @@
 import {API} from '../../services/services.api'
 import swal from 'sweetalert'
 import axios from 'axios'
+import ReactDOM from 'react-dom'
+import {InputModal} from '../../app/components/CleanPage/InputModal'
+import React from 'react'
+import {history} from '../index'
+
 export const GET_USER_GROUPS = {
     Load: 'groups/USER_GROUPS_LOAD',
     Loaded: 'groups/USER_GROUPS_LOADED',
@@ -17,7 +22,7 @@ export const GET_GROUPS_FOR_CLEAN = {
     Loaded: 'groups/GET_GROUPS_FOR_CLEAN_LOADED',
     Errors: 'groups/GET_GROUPS_FOR_CLEAN_ERRORS'
 }
-export const SET_CLEANING_STATE_BY_ID = 'SET_CLEANING_STATE_BY_ID'
+export const CLEAN_GROUP_BY_ID = 'CLEAN_GROUP_BY_ID'
 export const UPDATE_CLEANING_STATE = 'UPDATE_CLEANING_STATE'
 export const CLEAN_ALL_GROUPS = 'CLEAN_ALL_GROUPS'
 
@@ -201,7 +206,7 @@ export default (state = initialState, action) => {
             })
             return {...state, groups: {...state.groups, data: toggledGroups}}
         }
-        case SET_CLEANING_STATE_BY_ID: {
+        case CLEAN_GROUP_BY_ID: {
             let groupID = action.payload
             let withCleanTask = state.groups.data.map((group) => {
                 if (group.backEndID === groupID) {
@@ -296,24 +301,34 @@ export const AddGroupInCleanQue = (groupID) => {
 
 export const cleanGroupByID = (groupID, cb) => {
     return (dispatch) => {
-        API.startCleanTask([groupID]).then((res) => {})
+        API.startCleanTask([groupID]).then((res) => {
+            switch (res.data.error.id) {
+                case 1:
+                    getAccessTokenFromUser()
+                    break
+                case 2:
+                    showNotEnoughMoneyModal(res.error.value)
+                    break
+                default:
+                    let myInterval = setInterval(async () => {
+                        API.getCleaningTasks().then((r) => {
+                            const cleanTasks = r.data
+                            dispatch({
+                                type: UPDATE_CLEANING_STATE,
+                                payload: cleanTasks
+                            })
+                            if (cleanTasks.length === 0) {
+                                showCommentAlert(cb)
+                                clearInterval(myInterval)
+                            }
+                        })
+                    }, 500)
+            }
+        })
         dispatch({
-            type: SET_CLEANING_STATE_BY_ID,
+            type: CLEAN_GROUP_BY_ID,
             payload: groupID
         })
-        let myInterval = setInterval(async () => {
-            API.getCleaningTasks().then((r) => {
-                const cleanTasks = r.data
-                dispatch({
-                    type: UPDATE_CLEANING_STATE,
-                    payload: cleanTasks
-                })
-                if (cleanTasks.length === 0) {
-                    showCommentAlert(cb)
-                    clearInterval(myInterval)
-                }
-            })
-        }, 500)
     }
 }
 
@@ -386,6 +401,39 @@ function showCommentAlert(cb) {
             if (cb) {
                 cb()
             }
+        }
+    })
+}
+
+function getAccessTokenFromUser() {
+    let wrapper = window.document.createElement('div')
+    ReactDOM.render(<InputModal />, wrapper)
+    let el = wrapper.firstChild
+    const response = swal({
+        title: 'Упс. Мы не можем очистить ваши сообщества',
+        content: el,
+        buttons: {
+            confirm: {
+                text: 'Сохранить и запустить!',
+                value: ''
+            }
+        }
+    })
+    response.then((r) => {
+        console.log('RESPONSE IS:', r)
+        // return this.getAccessTokenFromLink(response)
+    })
+}
+function showNotEnoughMoneyModal(money) {
+    const response = swal({
+        title: 'Упс.. Недостаточно денег',
+        icon: 'error',
+        text: `Для очистки сообществ нужно еще ${money}р.\nПополните, пожалуйста, баланс`,
+        button: {text: 'Пополнить'}
+    })
+    response.then((r) => {
+        if (r === true) {
+            history.push('/add_money')
         }
     })
 }

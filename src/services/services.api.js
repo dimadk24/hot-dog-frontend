@@ -1,4 +1,8 @@
 import axios from 'axios'
+import ReactDOM from 'react-dom'
+import {InputModal} from '../app/components/CleanPage/InputModal'
+import swal from 'sweetalert'
+import React from 'react'
 
 const VK = window.VK
 

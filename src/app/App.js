@@ -85,6 +85,10 @@ class App extends Component {
                             )}
                         />
                         <Route path={'/feedback'} component={FeedbackPage} />
+                        <Route
+                            path={'/getToken'}
+                            component={() => <div>ACCESS TOKEN MAN</div>}
+                        />
                     </Switch>
                 </Fragment>
             </Router>
