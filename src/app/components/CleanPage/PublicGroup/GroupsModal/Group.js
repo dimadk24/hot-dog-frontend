@@ -5,6 +5,7 @@ import {
     AddGroupInCleanQue,
     DeleteGroupFromCleanQue
 } from '../../../../../store/reducers/reducer.clean'
+
 class Group extends Component {
     render() {
         const {group, AddGroupInCleanQue, DeleteGroupFromCleanQue} = this.props
@@ -12,7 +13,7 @@ class Group extends Component {
             <div className="group">
                 <div className="group__details">
                     <img src={group.avatar_url} alt="avatar" />
-                    {group.name}
+                    <span className="ellipsis">{group.name} САМАЯ ЛУЧШАЯ ГРУППА ДЛЯ ПОДРОСТКОВ</span>
                 </div>
                 <span
                     className={`plus-sign ${
@@ -20,7 +21,7 @@ class Group extends Component {
                     }`}
                     onClick={() => {
                         if (group.inCleanQue) {
-                            console.log("Group for deleting", group);
+                            console.log('Group for deleting', group)
                             DeleteGroupFromCleanQue(group.id, group.backEndID)
                         } else {
                             AddGroupInCleanQue(group.id)
@@ -31,6 +32,7 @@ class Group extends Component {
         )
     }
 }
+
 const mapStateToProps = (state) => ({})
 
 const mapDispatchToProps = (dispatch) =>

@@ -20,7 +20,7 @@ import {history} from '../../../store'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('clean data')
+console.log('scroll height')
 
 class CleanPage extends Component {
     state = {

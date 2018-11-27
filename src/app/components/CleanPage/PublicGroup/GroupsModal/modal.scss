@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
 
     &__bg {
         width: 100%;
@@ -19,7 +19,7 @@
         align-items: center;
 
         position: absolute;
-        top: 40%;
+        bottom: 40%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 50%;
@@ -28,6 +28,13 @@
         border-radius: 4px;
 
         padding-top: 3rem;
+        @media (max-width: 720px) {
+            width: 100%;
+            height: 90%;
+            bottom: 0;
+            left: 0;
+            transform: none;
+        }
         &__text {
             text-align: center;
             font-size: 2rem;
@@ -43,8 +50,9 @@
             .group {
                 display: flex;
                 justify-content: space-between;
-                width: auto;
+                width: 35rem;
                 min-width: 60%;
+                max-width: 95%;
                 padding: 1rem 2rem;
                 background: rgba(0, 0, 0, 0.15);
                 border-radius: 16px;
@@ -52,6 +60,9 @@
                 height: 5rem;
                 min-height: 5rem;
                 margin-bottom: 1rem;
+                @media (max-width: 720px) {
+                    width: 95%;
+                }
                 &__details {
                     display: flex;
                     align-items: center;
@@ -69,6 +80,12 @@
     }
 }
 
+.ellipsis {
+    width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 .plus-sign {
     display: flex;
     align-items: center;
