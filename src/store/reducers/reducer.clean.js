@@ -4,7 +4,6 @@ import axios from 'axios'
 import ReactDOM from 'react-dom'
 import {InputModal} from '../../app/components/CleanPage/InputModal'
 import React from 'react'
-import {history} from '../index'
 
 export const GET_USER_GROUPS = {
     Load: 'groups/USER_GROUPS_LOAD',
@@ -255,24 +254,38 @@ export default (state = initialState, action) => {
     }
 }
 
-export const cleanAllGroups = (cb) => {
+export const cleanAllGroups = (cb, allGroups) => {
     return (dispatch) => {
-        dispatch({
-            type: CLEAN_ALL_GROUPS
+        const groupsIDs = allGroups.map((g) => {
+            return g.backEndID
         })
-        let myInterval = setInterval(() => {
-            API.getCleaningTasks().then((r) => {
-                const cleanTasks = r.data
-                dispatch({
-                    type: UPDATE_CLEANING_STATE,
-                    payload: cleanTasks
-                })
-                if (cleanTasks.length === 0) {
-                    showCommentAlert(cb)
-                    clearInterval(myInterval)
-                }
-            })
-        }, 500)
+        API.startCleanTask(groupsIDs).then((res) => {
+            switch (res.data.error.id) {
+                case 1:
+                    getAccessTokenFromUser()
+                    break
+                case 2:
+                    showNotEnoughMoneyModal(res.error.value)
+                    break
+                default:
+                    dispatch({
+                        type: CLEAN_ALL_GROUPS
+                    })
+                    let myInterval = setInterval(() => {
+                        API.getCleaningTasks().then((r) => {
+                            const cleanTasks = r.data
+                            dispatch({
+                                type: UPDATE_CLEANING_STATE,
+                                payload: cleanTasks
+                            })
+                            if (cleanTasks.length === 0) {
+                                showCommentAlert(cb)
+                                clearInterval(myInterval)
+                            }
+                        })
+                    }, 500)
+            }
+        })
     }
 }
 
@@ -310,7 +323,11 @@ export const cleanGroupByID = (groupID, cb) => {
                     showNotEnoughMoneyModal(res.error.value)
                     break
                 default:
-                    let myInterval = setInterval(async () => {
+                    dispatch({
+                        type: CLEAN_GROUP_BY_ID,
+                        payload: groupID
+                    })
+                    let myInterval = setInterval(() => {
                         API.getCleaningTasks().then((r) => {
                             const cleanTasks = r.data
                             dispatch({
@@ -325,20 +342,7 @@ export const cleanGroupByID = (groupID, cb) => {
                     }, 500)
             }
         })
-        dispatch({
-            type: CLEAN_GROUP_BY_ID,
-            payload: groupID
-        })
     }
-}
-
-async function getCleanTasks() {
-    return (await axios.get('https://hot-dog.site/api/getCleanTasks', {
-        params: {
-            user_vk_id: window.user_id,
-            auth_key: window.auth_key
-        }
-    })).data
 }
 
 export const DeleteGroupFromCleanQue = (groupID, backEndID) => {
@@ -433,7 +437,8 @@ function showNotEnoughMoneyModal(money) {
     })
     response.then((r) => {
         if (r === true) {
-            history.push('/add_money')
+            // history.push('/add_money')
+            console.log('GO TO ADD MONEY')
         }
     })
 }

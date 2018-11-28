@@ -3,7 +3,7 @@ import swal from 'sweetalert'
 import './InputModal.css'
 
 const OAUTH_LINK =
-    `https://oauth.vk.com/authorize?client_id=6726221&redirect_uri=https://dimadk24.github.io/smm-service-frontend/getToken&display=page&response_type=token&v=5.85&scope=groups,offline`
+    'https://oauth.vk.com/authorize?client_id=6726221&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token&v=5.85&scope=groups,offline'
 const PLACEHOLDER_ACCESS_TOKEN = 'https://oauth.vk.com/blank.html#access_token=1383bc6d5df7bf74655b531297c71617b2345687ca&expires_in=0&user_id=159204098'
 
 class InputModal extends React.Component {

@@ -20,7 +20,7 @@ import {history} from '../../../store'
 
 const CLEAN_TASK_ERRORS = ['Возникла ошибка', 'Завершили'] // errors? finished != error
 
-console.log('redirect:', document.domain, history)
+console.log('changes:', document.domain, history)
 
 class CleanPage extends Component {
     state = {
@@ -226,7 +226,7 @@ class CleanPage extends Component {
                     onCleanClick={() =>
                         cleanAllGroups(() => {
                             history.push('/feedback')
-                        })
+                        }, groups)
                     }
                 />
 
