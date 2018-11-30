@@ -59,7 +59,12 @@ export const API = {
                 auth_key: window.auth_key,
                 id: public_id
             }
-        })
+        }),
+    setAccessToken: (token) => axios.patch('https://hot-dog.site/api/setAccessToken', {
+        access_token: token,
+        user_vk_id: window.user_id,
+        auth_key: window.auth_key
+    })
 }
 
 const getGroupsPromise = new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import './AddMoneyPage.css'
+import './money-page.scss'
 
 class AddMoneyPage extends React.Component {
     componentWillMount() {
@@ -9,7 +9,7 @@ class AddMoneyPage extends React.Component {
     }
 
     componentWillUnmount() {
-        window.clearInterval(this.timerId);
+        window.clearInterval(this.timerId)
     }
 
     render() {
@@ -17,6 +17,7 @@ class AddMoneyPage extends React.Component {
             <div className="add-money-page">
                 <div className="text">
                     <p>Пополните баланс для очистки сообщества:</p>
+                    <div className="underline" />
                 </div>
                 <form
                     action="https://money.yandex.ru/quickpay/confirm.xml"
@@ -66,7 +67,11 @@ class AddMoneyPage extends React.Component {
                         name="short-dest"
                         value="hot dog: пополнение баланса"
                     />
-                    <input type="hidden" name="label" value={`hot-dog: ${window.user_id}`} />
+                    <input
+                        type="hidden"
+                        name="label"
+                        value={`hot-dog: ${window.user_id}`}
+                    />
                     <input
                         type="hidden"
                         name="successURL"

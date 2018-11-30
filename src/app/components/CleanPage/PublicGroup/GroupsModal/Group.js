@@ -13,7 +13,7 @@ class Group extends Component {
             <div className="group">
                 <div className="group__details">
                     <img src={group.avatar_url} alt="avatar" />
-                    <span className="ellipsis">{group.name} САМАЯ ЛУЧШАЯ ГРУППА ДЛЯ ПОДРОСТКОВ</span>
+                    <span className="ellipsis">{group.name}</span>
                 </div>
                 <span
                     className={`plus-sign ${

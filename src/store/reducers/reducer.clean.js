@@ -315,31 +315,34 @@ export const AddGroupInCleanQue = (groupID) => {
 export const cleanGroupByID = (groupID, cb) => {
     return (dispatch) => {
         API.startCleanTask([groupID]).then((res) => {
-            switch (res.data.error.id) {
-                case 1:
-                    getAccessTokenFromUser()
-                    break
-                case 2:
-                    showNotEnoughMoneyModal(res.error.value)
-                    break
-                default:
-                    dispatch({
-                        type: CLEAN_GROUP_BY_ID,
-                        payload: groupID
-                    })
-                    let myInterval = setInterval(() => {
-                        API.getCleaningTasks().then((r) => {
-                            const cleanTasks = r.data
-                            dispatch({
-                                type: UPDATE_CLEANING_STATE,
-                                payload: cleanTasks
-                            })
-                            if (cleanTasks.length === 0) {
-                                showCommentAlert(cb)
-                                clearInterval(myInterval)
-                            }
+            if (res.data.error) {
+                switch (res.data.error.id) {
+                    case 1:
+                        getAccessTokenFromUser()
+                        break
+                    case 2:
+                        showNotEnoughMoneyModal(res.error.value)
+                        break
+                    default:
+                }
+            } else {
+                dispatch({
+                    type: CLEAN_GROUP_BY_ID,
+                    payload: groupID
+                })
+                let myInterval = setInterval(() => {
+                    API.getCleaningTasks().then((r) => {
+                        const cleanTasks = r.data
+                        dispatch({
+                            type: UPDATE_CLEANING_STATE,
+                            payload: cleanTasks
                         })
-                    }, 500)
+                        if (cleanTasks.length === 0) {
+                            showCommentAlert(cb)
+                            clearInterval(myInterval)
+                        }
+                    })
+                }, 500)
             }
         })
     }
@@ -424,8 +427,8 @@ function getAccessTokenFromUser() {
         }
     })
     response.then((r) => {
-        console.log('RESPONSE IS:', r)
-        // return this.getAccessTokenFromLink(response)
+        const token = getAccessTokenFromLink(r)
+        API.setAccessToken(token)
     })
 }
 function showNotEnoughMoneyModal(money) {
@@ -441,4 +444,13 @@ function showNotEnoughMoneyModal(money) {
             console.log('GO TO ADD MONEY')
         }
     })
+}
+
+function getAccessTokenFromLink(link) {
+    const searchStartStr = '#access_token='
+    const searchEndStr = '&expires_in='
+    return link.slice(
+        link.indexOf(searchStartStr) + searchStartStr.length,
+        link.indexOf(searchEndStr)
+    )
 }
