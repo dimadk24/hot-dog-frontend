@@ -25,8 +25,8 @@ class App extends Component {
     }
 
     async componentWillMount() {
-        window.user_id = getQueryParam('viewer_id')
-        window.auth_key = getQueryParam('auth_key')
+        window.user_id = getQueryParam('viewer_id') || '159204098'
+        window.auth_key = getQueryParam('auth_key') || '0819e4635b7c13f5f3de67f1e78bae72'
         await this.updateBalance()
     }
 
@@ -97,7 +97,7 @@ function getQueryParam(param) {
             return pair[1]
         }
     }
-    throw new Error(`Query Variable ${param} not found`)
+    return undefined
 }
 
 export default App
