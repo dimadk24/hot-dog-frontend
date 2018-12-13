@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.2/workbox-sw.js");
 
 importScripts(
-  "/smm-service-frontend/precache-manifest.e704741802f8a54bc1f9a996a0f35ddc.js"
+  "/smm-service-frontend/precache-manifest.e70671b85d94e39df374fa512562744d.js"
 );
 
 workbox.clientsClaim();
