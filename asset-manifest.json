@@ -1,14 +1,14 @@
 {
-  "main.css": "/smm-service-frontend/static/css/main.bd0272cb.chunk.css",
-  "main.js": "/smm-service-frontend/static/js/main.5204d5d7.chunk.js",
-  "main.js.map": "/smm-service-frontend/static/js/main.5204d5d7.chunk.js.map",
-  "static/js/1.1e71a476.chunk.js": "/smm-service-frontend/static/js/1.1e71a476.chunk.js",
-  "static/js/1.1e71a476.chunk.js.map": "/smm-service-frontend/static/js/1.1e71a476.chunk.js.map",
-  "runtime~main.js": "/smm-service-frontend/static/js/runtime~main.be1cbe97.js",
-  "runtime~main.js.map": "/smm-service-frontend/static/js/runtime~main.be1cbe97.js.map",
-  "static/media/fontello.css": "/smm-service-frontend/static/media/fontello.17b4028a.woff2",
-  "static/css/main.bd0272cb.chunk.css.map": "/smm-service-frontend/static/css/main.bd0272cb.chunk.css.map",
-  "index.html": "/smm-service-frontend/index.html",
-  "precache-manifest.e70671b85d94e39df374fa512562744d.js": "/smm-service-frontend/precache-manifest.e70671b85d94e39df374fa512562744d.js",
-  "service-worker.js": "/smm-service-frontend/service-worker.js"
+  "main.css": "/hot-dog-frontend/static/css/main.0b34dd81.chunk.css",
+  "main.js": "/hot-dog-frontend/static/js/main.cfb9254e.chunk.js",
+  "main.js.map": "/hot-dog-frontend/static/js/main.cfb9254e.chunk.js.map",
+  "static/js/1.1e71a476.chunk.js": "/hot-dog-frontend/static/js/1.1e71a476.chunk.js",
+  "static/js/1.1e71a476.chunk.js.map": "/hot-dog-frontend/static/js/1.1e71a476.chunk.js.map",
+  "runtime~main.js": "/hot-dog-frontend/static/js/runtime~main.27c40a23.js",
+  "runtime~main.js.map": "/hot-dog-frontend/static/js/runtime~main.27c40a23.js.map",
+  "static/media/fontello.css": "/hot-dog-frontend/static/media/fontello.aba500a9.ttf",
+  "static/css/main.0b34dd81.chunk.css.map": "/hot-dog-frontend/static/css/main.0b34dd81.chunk.css.map",
+  "index.html": "/hot-dog-frontend/index.html",
+  "precache-manifest.b81bf165f85dfd3c44bf4bbc700193f8.js": "/hot-dog-frontend/precache-manifest.b81bf165f85dfd3c44bf4bbc700193f8.js",
+  "service-worker.js": "/hot-dog-frontend/service-worker.js"
 }
